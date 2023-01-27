@@ -3,6 +3,6 @@ package org.kie;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-public class GreetingResourceIT extends GreetingResourceTest {
+public class SynantisiResourceIT extends SynantisiResourceTest {
     // Execute the same tests but in packaged mode.
 }
