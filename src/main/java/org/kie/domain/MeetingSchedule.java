@@ -52,7 +52,10 @@ public class MeetingSchedule extends AbstractPersistable {
     public void setConstraintConfiguration(MeetingConstraintConfiguration constraintConfiguration) {
         this.constraintConfiguration = constraintConfiguration;
     }
-
+//TODO remove it when implementing with db
+    public void setId(Long id) {
+        this.id = id;
+    }
     public List<Meeting> getMeetingList() {
         return meetingList;
     }
