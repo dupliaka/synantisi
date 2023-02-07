@@ -8,21 +8,6 @@ $(document).ready(function () {
       'Accept': 'application/json'
     }
   });
-
-  $("#refreshButton").click(function () {
-    refreshTimeTable();
-  });
-  $("#solveButton").click(function () {
-    solve();
-  });
-  $("#stopSolvingButton").click(function () {
-    stopSolving();
-  });
-
-  $("#unsolved").click(function () {
-       uploadUnsolved();
-  });
-
 });
 
 function convertToId(str) {
@@ -30,21 +15,16 @@ function convertToId(str) {
   return btoa(str).replace(/=/g, "");
 }
 
-function uploadUnsolved(){
-
-    alert("af");
-
+function uploadUnsolved(e){
+    var req = new XMLHttpRequest();
+    req.open("POST", "/synantisi", true);
+    req.setRequestHeader('Content-Type', 'application/vnd.ms-excel; charset=UTF-8');
+    req.responseType = 'blob';
+    const selectedFile = e.files[0];
+    returnXlsx(selectedFile.name, req,selectedFile)
 }
 
-function solve() {
-    var request = new XMLHttpRequest();
-    request.open('GET', "/synantisi");
-    request.setRequestHeader('Content-Type', 'application/vnd.ms-excel; charset=UTF-8');
-    request.responseType = 'blob';
-    returnXlsx("solved.xlsx", request)
-}
-
-function returnXlsx(fileName, request) {
+function returnXlsx(fileName, request,selectedFile) {
     request.onload = function(e) {
         if (this.status === 200) {
             var blob = this.response;
@@ -62,68 +42,7 @@ function returnXlsx(fileName, request) {
                }
            }
        };
-       request.send();
-}
-
-function refreshSolvingButtons(solving) {
-  if (solving) {
-    $("#solveButton").hide();
-    $("#stopSolvingButton").show();
-    if (autoRefreshIntervalId == null) {
-      autoRefreshIntervalId = setInterval(refreshTimeTable, 2000);
-    }
-  } else {
-    $("#solveButton").show();
-    $("#stopSolvingButton").hide();
-    if (autoRefreshIntervalId != null) {
-      clearInterval(autoRefreshIntervalId);
-      autoRefreshIntervalId = null;
-    }
-  }
-}
-
-function stopSolving() {
-  $.post("/timeTable/stopSolving", function () {
-    refreshSolvingButtons(false);
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Stop solving failed.", xhr);
-  });
-}
-
-function addLesson() {
-  var subject = $("#lesson_subject").val().trim();
-  $.post("/lessons", JSON.stringify({
-    "subject": subject,
-    "teacher": $("#lesson_teacher").val().trim(),
-    "studentGroup": $("#lesson_studentGroup").val().trim()
-  }), function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Adding lesson (" + subject + ") failed.", xhr);
-  });
-  $('#lessonDialog').modal('toggle');
-}
-
-function deleteLesson(lesson) {
-  $.delete("/lessons/" + lesson.id, function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Deleting lesson (" + lesson.name + ") failed.", xhr);
-  });
-}
-
-function addTimeslot() {
-  $.post("/timeslots", JSON.stringify({
-    "dayOfWeek": $("#timeslot_dayOfWeek").val().trim().toUpperCase(),
-    "startTime": $("#timeslot_startTime").val().trim(),
-    "endTime": $("#timeslot_endTime").val().trim()
-  }), function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Adding timeslot failed.", xhr);
-  });
-  $('#timeslotDialog').modal('toggle');
+       request.send(selectedFile);
 }
 
 function deleteTimeslot(timeslot) {
@@ -131,26 +50,6 @@ function deleteTimeslot(timeslot) {
     refreshTimeTable();
   }).fail(function (xhr, ajaxOptions, thrownError) {
     showError("Deleting timeslot (" + timeslot.name + ") failed.", xhr);
-  });
-}
-
-function addRoom() {
-  var name = $("#room_name").val().trim();
-  $.post("/rooms", JSON.stringify({
-    "name": name
-  }), function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Adding room (" + name + ") failed.", xhr);
-  });
-  $("#roomDialog").modal('toggle');
-}
-
-function deleteRoom(room) {
-  $.delete("/rooms/" + room.id, function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Deleting room (" + room.name + ") failed.", xhr);
   });
 }
 

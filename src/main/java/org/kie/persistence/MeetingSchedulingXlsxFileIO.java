@@ -26,6 +26,8 @@ import org.optaplanner.core.api.score.constraint.Indictment;
 
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -76,6 +78,39 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         } catch (IOException | RuntimeException e) {
             throw new IllegalStateException("Failed reading inputScheduleFile ("
                     + inputScheduleFile + ").", e);
+        }
+    }
+
+    @Override
+    public void write(MeetingSchedule solution, File outputScheduleFile) {
+        try (FileOutputStream out = new FileOutputStream(outputScheduleFile);
+             Workbook workbook = new MeetingSchedulingXlsxWriter(solution).write()) {
+            workbook.write(out);
+        } catch (IOException | RuntimeException e) {
+            throw new IllegalStateException("Failed writing outputScheduleFile (" + outputScheduleFile
+                    + ") for schedule (" + solution + ").", e);
+        }
+    }
+
+    public byte[] writeToByteArray(MeetingSchedule solution) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        try (Workbook workbook = new MeetingSchedulingXlsxWriter(solution).write()) {
+            workbook.write(bos);
+        } catch (IOException | RuntimeException e) {
+            throw new IllegalStateException("Failed writing to stream"
+                    + " for schedule (" + solution + ").", e);
+        }
+
+        return bos.toByteArray();
+    }
+
+    public MeetingSchedule readFromByteArray(byte[] inputByteArray) {
+        try (InputStream in = new ByteArrayInputStream(inputByteArray)) {
+            XSSFWorkbook workbook = new XSSFWorkbook(in);
+            return new MeetingSchedulingXlsxReader(workbook).read();
+        } catch (IOException | RuntimeException e) {
+            throw new IllegalStateException("Failed reading inputStream.", e);
         }
     }
 
@@ -227,7 +262,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         }
 
         private void readSpeakerList(Map<String, Person> personMap, Meeting meeting, List<Attendance> speakerAttendanceList,
-                Set<Person> speakerSet, AtomicLong attendanceIdCounter) {
+                                     Set<Person> speakerSet, AtomicLong attendanceIdCounter) {
             meeting.setSpeakerList(Arrays.stream(nextStringCell().getStringCellValue().split(", "))
                     .filter(speaker -> !speaker.isEmpty())
                     .map(speakerName -> {
@@ -273,7 +308,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         }
 
         private List<Attendance> getAttendanceLists(Meeting meeting, Map<String, Person> personMap, Set<Person> speakerSet,
-                AtomicLong attendanceIdCounter) {
+                                                    AtomicLong attendanceIdCounter) {
             List<Attendance> attendanceList = new ArrayList<>(currentSheet.getLastRowNum() - 1);
             Set<Person> requiredPersonSet = new HashSet<>();
 
@@ -291,7 +326,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         }
 
         private List<RequiredAttendance> getRequiredAttendanceList(Meeting meeting, Map<String, Person> personMap,
-                Set<Person> speakerSet, Set<Person> requiredPersonSet, AtomicLong attendanceIdCounter) {
+                                                                   Set<Person> speakerSet, Set<Person> requiredPersonSet, AtomicLong attendanceIdCounter) {
             return Arrays.stream(nextStringCell().getStringCellValue().split(", "))
                     .filter(requiredAttendee -> !requiredAttendee.isEmpty())
                     .map(personName -> {
@@ -323,7 +358,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         }
 
         private List<PreferredAttendance> getPreferredAttendanceList(Meeting meeting, Map<String, Person> personMap,
-                Set<Person> speakerSet, Set<Person> requiredPersonSet, AtomicLong attendanceIdCounter) {
+                                                                     Set<Person> speakerSet, Set<Person> requiredPersonSet, AtomicLong attendanceIdCounter) {
             Set<Person> preferredPersonSet = new HashSet<>();
             return Arrays.stream(nextStringCell().getStringCellValue().split(", "))
                     .filter(preferredAttendee -> !preferredAttendee.isEmpty())
@@ -462,17 +497,6 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         }
     }
 
-    @Override
-    public void write(MeetingSchedule solution, File outputScheduleFile) {
-        try (FileOutputStream out = new FileOutputStream(outputScheduleFile);
-                Workbook workbook = new MeetingSchedulingXlsxWriter(solution).write()) {
-            workbook.write(out);
-        } catch (IOException | RuntimeException e) {
-            throw new IllegalStateException("Failed writing outputScheduleFile (" + outputScheduleFile
-                    + ") for schedule (" + solution + ").", e);
-        }
-    }
-
     private static final class MeetingSchedulingXlsxWriter
             extends AbstractXlsxWriter<MeetingSchedule, HardMediumSoftScore> {
 
@@ -575,8 +599,8 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                 nextCell().setCellValue(meeting.getDurationInGrains() * TimeGrain.GRAIN_LENGTH_IN_MINUTES);
                 nextCell().setCellValue(meeting.getSpeakerList() == null ? ""
                         : meeting.getSpeakerList().stream()
-                                .map(Person::getFullName)
-                                .collect(joining(", ")));
+                        .map(Person::getFullName)
+                        .collect(joining(", ")));
                 nextCell().setCellValue(meeting.getContent() == null ? "" : meeting.getContent());
                 nextCell().setCellValue(
                         meeting.getRequiredAttendanceList().stream()
@@ -817,7 +841,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                     nextMeetingAssignmentListCell(timeGrainMeetingAssignmentList,
                             meetingAssignment -> meetingAssignment.getMeeting().getTopic() + "\n  "
                                     + meetingAssignment.getMeeting().getSpeakerList().stream().map(Person::getFullName)
-                                            .collect(joining(", ")),
+                                    .collect(joining(", ")),
                             Arrays.asList(filteredConstraintNames));
                     mergingPreviousMeetingList = !timeGrainMeetingAssignmentList.isEmpty();
                     mergeStart = currentColumnNumber;
@@ -893,7 +917,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
         }
 
         void nextMeetingAssignmentListCell(List<MeetingAssignment> meetingAssignmentList,
-                Function<MeetingAssignment, String> stringFunction, List<String> filteredConstraintNames) {
+                                           Function<MeetingAssignment, String> stringFunction, List<String> filteredConstraintNames) {
             if (meetingAssignmentList == null) {
                 meetingAssignmentList = Collections.emptyList();
             }

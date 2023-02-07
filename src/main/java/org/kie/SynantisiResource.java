@@ -1,40 +1,36 @@
 package org.kie;
 
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.kie.domain.MeetingSchedule;
 import org.kie.persistence.MeetingSchedulingXlsxFileIO;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 
-import org.kie.domain.MeetingSchedule;
 @Path("synantisi")
 public class SynantisiResource {
 
-    @GET
+    @POST
     @Produces("application/vnd.ms-excel")
-    public Response getSynantisi() {
+    public Response getSynantisi(@RequestBody byte[] body) {
 
         SolverFactory solverFactory = SolverFactory.createFromXmlResource("meetingSchedulingSolverConfig.xml");
         Solver<MeetingSchedule> constructionSolver = solverFactory.buildSolver();
+
         MeetingSchedulingXlsxFileIO meetingSchedulingXlsxFileIO = new MeetingSchedulingXlsxFileIO();
-        MeetingSchedule unsolved = meetingSchedulingXlsxFileIO.read(new File("/home/adupliak/IdeaProjects/synantisi/50meetings-160timegrains-5rooms.xlsx"));
+        MeetingSchedule unsolved = meetingSchedulingXlsxFileIO.readFromByteArray(body);
+
         unsolved.setId(0L);
-        MeetingSchedule solution =  constructionSolver.solve(unsolved);
-        File solutionFile = new File("solution.xlsx");
-        meetingSchedulingXlsxFileIO.write(solution,new File("solution.xlsx"));
+        MeetingSchedule solution = constructionSolver.solve(unsolved);
 
-
-        File file = new File("/home/adupliak/IdeaProjects/synantisi/solution.xlsx");
-
-        Response.ResponseBuilder response = Response.ok((Object) file);
+        byte[] xlsx = meetingSchedulingXlsxFileIO.writeToByteArray(solution);
+        Response.ResponseBuilder response = Response.ok(xlsx);
         response.header("Content-Disposition",
                 "attachment; filename=new-excel-file.xls");
         return response.build();
-
     }
 }
