@@ -35,3 +35,4 @@ You can create a native executable using:
 ```shell script
 ./mvnw package -Pnative
 ```
+

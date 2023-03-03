@@ -1,14 +1,24 @@
 package org.kie.domain;
 
-public class Person extends AbstractPersistable {
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Person  {
+
+    @PlanningId
+    @Id
+    @GeneratedValue
+    protected Long id;
     private String fullName;
 
     public Person() {
     }
 
     public Person(long id, String fullName) {
-        super(id);
         this.fullName = fullName;
     }
 
@@ -20,9 +30,15 @@ public class Person extends AbstractPersistable {
         this.fullName = fullName;
     }
 
-    @Override
     public String toString() {
         return fullName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

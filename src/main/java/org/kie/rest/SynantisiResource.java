@@ -1,4 +1,4 @@
-package org.kie;
+package org.kie.rest;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.kie.domain.MeetingSchedule;
@@ -33,4 +33,6 @@ public class SynantisiResource {
                 "attachment; filename=new-excel-file.xls");
         return response.build();
     }
+
+    
 }

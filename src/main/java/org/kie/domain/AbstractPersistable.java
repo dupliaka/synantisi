@@ -3,8 +3,15 @@ package org.kie.domain;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+@Entity
 public abstract class AbstractPersistable {
 
+    @PlanningId
+    @Id
+    @GeneratedValue
     protected Long id;
 
     protected AbstractPersistable() {
@@ -14,7 +21,6 @@ public abstract class AbstractPersistable {
         this.id = id;
     }
 
-    @PlanningId
     public long getId() {
         return id;
     }
