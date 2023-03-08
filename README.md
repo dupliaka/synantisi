@@ -25,7 +25,7 @@ The application, packaged as an _über-jar_, is now runnable using `java -jar ta
 
 http://localhost:8080
 
-![alt text](http://url/to/img.png)
+![Synantisi home](https://github.com/dupliaka/synantisi/blob/main/src/main/resources/synantisi.jpg)
 
 To get the calculation done you would need to provide a filled out 
 excel file. See for example [50meetings-160timegrains-5rooms.xlsx](50meetings-160timegrains-5rooms.xlsx)
