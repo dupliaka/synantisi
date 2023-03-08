@@ -1,5 +1,8 @@
 package org.kie.domain;
 
+import javax.persistence.Entity;
+
+@Entity
 public class PreferredAttendance extends Attendance {
 
     public PreferredAttendance() {

@@ -2,23 +2,32 @@ package org.kie.domain;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.entity.PlanningPin;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
-@PlanningEntity
-public class MeetingAssignment extends AbstractPersistable {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
+@Entity
+@PlanningEntity
+public class MeetingAssignment {
+
+    @PlanningId
+    @Id
+    @GeneratedValue
+    protected Long id;
     private Meeting meeting;
     private boolean pinned;
-
     // Planning variables: changes during planning, between score calculations.
+
     private TimeGrain startingTimeGrain;
     private Room room;
-
     public MeetingAssignment() {
     }
 
     public MeetingAssignment(long id) {
-        super(id);
+        this.id = id;
     }
 
     public MeetingAssignment(long id, Meeting meeting) {
@@ -67,10 +76,10 @@ public class MeetingAssignment extends AbstractPersistable {
         this.room = room;
     }
 
+
     // ************************************************************************
     // Complex methods
     // ************************************************************************
-
     public int calculateOverlap(MeetingAssignment other) {
         if (startingTimeGrain == null || other.getStartingTimeGrain() == null) {
             return 0;
@@ -119,4 +128,7 @@ public class MeetingAssignment extends AbstractPersistable {
         return meeting.toString();
     }
 
+    public Long getId() {
+        return id;
+    }
 }

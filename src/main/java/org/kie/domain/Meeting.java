@@ -1,10 +1,19 @@
 package org.kie.domain;
 
 
+import org.optaplanner.core.api.domain.lookup.PlanningId;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.List;
+@Entity
+public class Meeting {
 
-public class Meeting extends AbstractPersistable {
-
+    @PlanningId
+    @Id
+    @GeneratedValue
+    protected Long id;
     private String topic;
     private List<Person> speakerList;
     private String content;
@@ -21,7 +30,7 @@ public class Meeting extends AbstractPersistable {
     }
 
     public Meeting(long id) {
-        super(id);
+        this.id = id;
     }
 
     public Meeting(long id, String topic, int durationInGrains) {
@@ -105,5 +114,9 @@ public class Meeting extends AbstractPersistable {
     @Override
     public String toString() {
         return topic;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

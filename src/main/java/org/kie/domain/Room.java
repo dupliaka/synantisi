@@ -1,7 +1,17 @@
 package org.kie.domain;
 
-public class Room extends AbstractPersistable  {
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+@Entity
+public class Room {
+
+    @PlanningId
+    @Id
+    @GeneratedValue
+    protected Long id;
     private String name;
     private int capacity;
 
@@ -9,7 +19,7 @@ public class Room extends AbstractPersistable  {
     }
 
     public Room(long id, String name) {
-        super(id);
+        this.id = id;
         this.name = name;
     }
 

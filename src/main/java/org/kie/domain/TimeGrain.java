@@ -1,14 +1,21 @@
 package org.kie.domain;
 
+import org.optaplanner.core.api.domain.lookup.PlanningId;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class TimeGrain extends AbstractPersistable
-        implements Comparable<TimeGrain> {
+public class TimeGrain implements Comparable<TimeGrain> {
 
+    @PlanningId
+    @Id
+    @GeneratedValue
+    protected Long id;
     private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDay)
             .thenComparingInt(TimeGrain::getStartingMinuteOfDay);
 
@@ -25,7 +32,7 @@ public class TimeGrain extends AbstractPersistable
     }
 
     public TimeGrain(long id, int grainIndex, Day day, int startingMinuteOfDay) {
-        super(id);
+        this.id = id;
         this.grainIndex = grainIndex;
         this.day = day;
         this.startingMinuteOfDay = startingMinuteOfDay;
