@@ -6,13 +6,15 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.List;
+
 @Entity
 public class Meeting {
 
-    @PlanningId
     @Id
     @GeneratedValue
+    @PlanningId
     protected Long id;
     private String topic;
     private List<Person> speakerList;
@@ -22,19 +24,15 @@ public class Meeting {
      * Multiply by {@link TimeGrain#GRAIN_LENGTH_IN_MINUTES} to get duration in minutes.
      */
     private int durationInGrains;
-
     private List<RequiredAttendance> requiredAttendanceList;
+
+    @ManyToOne
     private List<PreferredAttendance> preferredAttendanceList;
 
     public Meeting() {
     }
 
-    public Meeting(long id) {
-        this.id = id;
-    }
-
-    public Meeting(long id, String topic, int durationInGrains) {
-        this(id);
+    public Meeting(String topic, int durationInGrains) {
         this.topic = topic;
         this.durationInGrains = durationInGrains;
     }

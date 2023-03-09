@@ -201,10 +201,10 @@ public class MeetingSchedulingGenerator extends LoggingMain {
             int durationInGrains = durationInGrainsOptions[random.nextInt(durationInGrainsOptions.length)];
             int attendanceListSize = personsPerMeetingOptions[random.nextInt(personsPerMeetingOptions.length)];
             int requiredAttendanceListSize = Math.max(2, random.nextInt(attendanceListSize + 1));
-            Meeting meeting = new Meeting(i, topic, durationInGrains);
+            Meeting meeting = new Meeting(topic, durationInGrains);
             List<RequiredAttendance> requiredAttendanceList = new ArrayList<>(requiredAttendanceListSize);
             for (int j = 0; j < requiredAttendanceListSize; j++) {
-                RequiredAttendance attendance = new RequiredAttendance(attendanceId++, meeting);
+                RequiredAttendance attendance = new RequiredAttendance(meeting);
                 // person is filled in later
                 requiredAttendanceList.add(attendance);
                 globalAttendanceList.add(attendance);
@@ -213,7 +213,7 @@ public class MeetingSchedulingGenerator extends LoggingMain {
             int preferredAttendanceListSize = attendanceListSize - requiredAttendanceListSize;
             List<PreferredAttendance> preferredAttendanceList = new ArrayList<>(preferredAttendanceListSize);
             for (int j = 0; j < preferredAttendanceListSize; j++) {
-                PreferredAttendance attendance = new PreferredAttendance(attendanceId++, meeting);
+                PreferredAttendance attendance = new PreferredAttendance(meeting);
                 // person is filled in later
                 preferredAttendanceList.add(attendance);
                 globalAttendanceList.add(attendance);
@@ -277,7 +277,7 @@ public class MeetingSchedulingGenerator extends LoggingMain {
         fullNameGenerator.predictMaximumSizeAndReset(personListSize);
         for (int i = 0; i < personListSize; i++) {
             String fullName = fullNameGenerator.generateNextValue();
-            Person person = new Person(i, fullName);
+            Person person = new Person(fullName);
             logger.trace("Created person with fullName ({}).", fullName);
             personList.add(person);
         }

@@ -9,8 +9,7 @@ public abstract class Attendance extends AbstractPersistable {
     protected Attendance() {
     }
 
-    protected Attendance(long id, Meeting meeting) {
-        super(id);
+    protected Attendance( Meeting meeting) {
         this.meeting = meeting;
     }
 

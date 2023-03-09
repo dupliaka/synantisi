@@ -183,7 +183,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
             List<Person> personList = new ArrayList<>(currentSheet.getLastRowNum() - 1);
             long id = 0L;
             while (nextRow()) {
-                Person person = new Person(id++, nextStringCell().getStringCellValue());
+                Person person = new Person(nextStringCell().getStringCellValue());
                 if (!VALID_NAME_PATTERN.matcher(person.getFullName()).matches()) {
                     throw new IllegalStateException(
                             currentPosition() + ": The person name (" + person.getFullName()
@@ -222,7 +222,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                     Collectors.toMap(Room::getName, Function.identity()));
 
             while (nextRow()) {
-                Meeting meeting = new Meeting(meetingId++);
+                Meeting meeting = new Meeting();
                 List<Attendance> speakerAttendanceList = new ArrayList<>();
                 Set<Person> speakerSet = new HashSet<>();
                 MeetingAssignment meetingAssignment = new MeetingAssignment(meetingAssignmentId++);
@@ -237,7 +237,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                     List<RequiredAttendance> requiredAttendanceList = new ArrayList<>(solution.getPersonList().size());
                     for (Person person : solution.getPersonList()) {
                         RequiredAttendance requiredAttendance =
-                                createAttendance(attendanceIdCounter, id -> new RequiredAttendance(id, meeting));
+                                createAttendance(attendanceIdCounter, id -> new RequiredAttendance(meeting));
                         requiredAttendance.setPerson(person);
                         requiredAttendanceList.add(requiredAttendance);
                         attendanceList.add(requiredAttendance);
@@ -279,7 +279,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                         }
                         speakerSet.add(speaker);
                         RequiredAttendance speakerAttendance =
-                                createAttendance(attendanceIdCounter, id -> new RequiredAttendance(id, meeting));
+                                createAttendance(attendanceIdCounter, id -> new RequiredAttendance( meeting));
                         speakerAttendance.setMeeting(meeting);
                         speakerAttendance.setPerson(speaker);
                         speakerAttendanceList.add(speakerAttendance);
@@ -331,7 +331,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                     .filter(requiredAttendee -> !requiredAttendee.isEmpty())
                     .map(personName -> {
                         RequiredAttendance requiredAttendance =
-                                createAttendance(attendanceIdCounter, id -> new RequiredAttendance(id, meeting));
+                                createAttendance(attendanceIdCounter, id -> new RequiredAttendance(meeting));
                         Person person = personMap.get(personName);
                         if (person == null) {
                             throw new IllegalStateException(
@@ -364,7 +364,7 @@ public class MeetingSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<Meet
                     .filter(preferredAttendee -> !preferredAttendee.isEmpty())
                     .map(personName -> {
                         PreferredAttendance preferredAttendance =
-                                createAttendance(attendanceIdCounter, id -> new PreferredAttendance(id, meeting));
+                                createAttendance(attendanceIdCounter, id -> new PreferredAttendance( meeting));
                         Person person = personMap.get(personName);
                         if (person == null) {
                             throw new IllegalStateException(

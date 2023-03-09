@@ -7,18 +7,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Person  {
+public class Person {
 
-    @PlanningId
     @Id
     @GeneratedValue
+    @PlanningId
     protected Long id;
     private String fullName;
 
     public Person() {
     }
 
-    public Person(long id, String fullName) {
+    public Person(String fullName) {
         this.fullName = fullName;
     }
 
@@ -30,15 +30,9 @@ public class Person  {
         this.fullName = fullName;
     }
 
+    @Override
     public String toString() {
         return fullName;
-    }
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }
