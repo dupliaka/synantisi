@@ -13,17 +13,171 @@
         <div id="notificationPanel" style="position: absolute; top: .5rem;"></div>
     </div>
     <h1>Synantisi F2F scheduler</h1>
-    <p>Schedule meetings for your face to face event</p>
+    <p>Schedule meetings for your face to face event.</p>
 
     <div class="mb-2">
-        <div>
-            <input id="unsolved" onchange="uploadUnsolved(this)" type="file"/>
+        <button class="btn btn-primary" id="demoButton" type="button">
+            <span class="fas fa-primary"></span> Demo
+        </button>
+        <button class="btn btn-secondary" id="refreshButton" type="button">
+            <span class="fas fa-refresh"></span> Refresh
+        </button>
+        <button class="btn btn-success" id="solveButton" type="button">
+            <span class="fas fa-play"></span> Solve
+        </button>
+        <button class="btn btn-danger" id="stopSolvingButton" type="button">
+            <span class="fas fa-stop"></span> Stop solving
+        </button>
+
+        <span class="score ml-2 align-middle font-weight-bold" id="score">Score: ?</span>
+
+        <div class="float-right">
+            <ul class="nav nav-pills" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a aria-controls="byRoomPanel" aria-selected="true" class="nav-link active" data-toggle="tab" href="#byRoomPanel"
+                       id="byRoomTab" role="tab">By room</a>
+                </li>
+                <li class="nav-item">
+                    <a aria-controls="bySpeaker" aria-selected="false" class="nav-link" data-toggle="tab" href="#bySpeaker"
+                       id="bySpeakerTab" role="tab">By speaker</a>
+                </li>
+                <li class="nav-item">
+                    <a aria-controls="byAttendees" aria-selected="false" class="nav-link" data-toggle="tab" href="#byAttendees"
+                       id="byAttendeesTab" role="tab">By attendees</a>
+                </li>
+            </ul>
         </div>
-        <script src="/webjars/jquery/jquery.min.js"></script>
-        <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
-        <script src="/webjars/js-joda/dist/js-joda.min.js"></script>
-        <script src="/app.js"></script>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div aria-labelledby="byRoomTab" class="tab-pane fade show active" id="byRoomPanel" role="tabpanel">
+            <table class="table table-borderless table-striped" id="scheduleByRoom">
+                <!-- Filled in by app.js -->
+            </table>
+        </div>
+        <div aria-labelledby="bySpeakerTab" class="tab-pane fade" id="bySpeaker" role="tabpanel">
+            <table class="table table-borderless table-striped" id="scheduleByTopic">
+                <!-- Filled in by app.js -->
+            </table>
+        </div>
+        <div aria-labelledby="byAttendeesTab" class="tab-pane fade" id="byAttendees" role="tabpanel">
+            <table class="table table-borderless table-striped" id="scheduleByAttendees">
+                <!-- Filled in by app.js -->
+            </table>
+        </div>
+    </div>
+    <div class="mb-4">
+        <button class="btn btn-primary" data-target="#scheduleDialog" data-toggle="modal" type="button">
+            <span class="fas fa-plus"></span> Add meeting
+        </button>
+        <button class="btn btn-secondary" data-target="#timeslotDialog" data-toggle="modal" type="button">
+            <span class="fas fa-plus"></span> Add timeslot
+        </button>
+        <button class="btn btn-secondary" data-target="#roomDialog" data-toggle="modal" type="button">
+            <span class="fas fa-plus"></span> Add room
+        </button>
+    </div>
+
+    <h2>Unassigned meetings</h2>
+    <div class="card-columns" id="unassignedMeetings"></div>
+</div>
+
+
+<div class="modal fade" id="scheduleDialog" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add a meeting</h4>
+                <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="meeting_topic">Topic</label>
+                    <input class="form-control" id="meeting_topic" required type="text" value="Code like a boss">
+                </div>
+                <div class="form-group">
+                    <label for="meeting_speaker">Speaker</label>
+                    <input class="form-control" id="meeting_speaker" required type="text" value="J. Carmack">
+                </div>
+                <div class="form-group">
+                    <label for="meeting_attendees">Attendees</label>
+                    <input class="form-control" id="meeting_attendees" required type="text" value="Sam Altman">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="addMeetingSubmitButton" type="button">Submit new meeting
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<div class="modal fade" id="timeslotDialog" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add a timeslot</h4>
+                <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="timeslot_dayOfWeek">Day of week</label>
+                    <select class="form-control" id="timeslot_dayOfWeek" required>
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option selected="selected">Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timeslot_startTime">Start time</label>
+                    <input class="form-control" id="timeslot_startTime" required type="time" value="08:30"/>
+                </div>
+                <div class="form-group">
+                    <label for="timeslot_endTime">End time</label>
+                    <input class="form-control" id="timeslot_endTime" required type="time" value="09:30">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="addTimeslotSubmitButton" type="button">Submit new timeslot
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="roomDialog" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add a room</h4>
+                <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="room_name">Name</label>
+                    <input class="form-control" id="room_name" required type="text" value="Room D">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="addRoomSubmitButton" type="button">Submit new room</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/jquery.min.js"></script>
+<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+<script src="/webjars/momentjs/min/moment.min.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>

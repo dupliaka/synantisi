@@ -18,25 +18,13 @@ sdk install java
 
 ## Usage
 
+![synantisi](http://github.com/dupliaka/synantisi/src/main/resources/synantisi.gif)
+
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-http://localhost:8080
-
-![alt text](http://url/to/img.png)
-
-To get the calculation done you would need to provide a filled out
-excel file. See for example [50meetings-160timegrains-5rooms.xlsx](50meetings-160timegrains-5rooms.xlsx)
-
-There you should fill up Tabs:
-
-- Days
-- Rooms
-- Persons
-- Meetings
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
