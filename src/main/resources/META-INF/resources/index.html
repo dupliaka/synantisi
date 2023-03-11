@@ -3,13 +3,13 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Synantisi F2F scheduler</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/webjars/font-awesome/css/all.css" />
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/webjars/font-awesome/css/all.css" rel="stylesheet"/>
 </head>
 
 <body>
 <div class="container">
-    <div class="sticky-top d-flex justify-content-center align-items-center" aria-live="polite" aria-atomic="true">
+    <div aria-atomic="true" aria-live="polite" class="sticky-top d-flex justify-content-center align-items-center">
         <div id="notificationPanel" style="position: absolute; top: .5rem;"></div>
     </div>
     <h1>Synantisi F2F scheduler</h1>
@@ -17,12 +17,12 @@
 
     <div class="mb-2">
         <div>
-            <input id="unsolved" type="file" onchange="uploadUnsolved(this)"/>
+            <input id="unsolved" onchange="uploadUnsolved(this)" type="file"/>
         </div>
-<script src="/webjars/jquery/jquery.min.js"></script>
-<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
-<script src="/webjars/js-joda/dist/js-joda.min.js"></script>
-<script src="/app.js"></script>
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/webjars/js-joda/dist/js-joda.min.js"></script>
+        <script src="/app.js"></script>
     </div>
 </div>
 </body>

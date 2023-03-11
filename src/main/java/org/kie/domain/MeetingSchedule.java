@@ -1,61 +1,50 @@
 package org.kie.domain;
 
+import java.util.List;
 
-import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
-
-import java.util.List;
+import org.optaplanner.core.api.solver.SolverStatus;
 
 @PlanningSolution
-public class MeetingSchedule extends AbstractPersistable {
-
-    @ConstraintConfigurationProvider
-    private MeetingConstraintConfiguration constraintConfiguration;
-
-    @ProblemFactCollectionProperty
+public class MeetingSchedule {
+    @PlanningEntityCollectionProperty
     private List<Meeting> meetingList;
     @ProblemFactCollectionProperty
-    private List<Day> dayList;
-    @ValueRangeProvider
+    @ValueRangeProvider(id = "timeslotRange")
+    private List<Timeslot> timeslotList;
     @ProblemFactCollectionProperty
-    private List<TimeGrain> timeGrainList;
-    @ValueRangeProvider
-    @ProblemFactCollectionProperty
+    @ValueRangeProvider(id = "roomRange")
     private List<Room> roomList;
-    @ProblemFactCollectionProperty
-    private List<Person> personList;
-    @ProblemFactCollectionProperty
-    private List<Attendance> attendanceList;
-
-    @PlanningEntityCollectionProperty
-    private List<MeetingAssignment> meetingAssignmentList;
-
     @PlanningScore
     private HardMediumSoftScore score;
+
+    private SolverStatus solverStatus;
 
     public MeetingSchedule() {
     }
 
-    public MeetingSchedule(long id) {
-        super(id);
+    public MeetingSchedule(List<Meeting> meetingList, List<Timeslot> timeslotList, List<Room> roomList) {
+        this.meetingList = meetingList;
+        this.timeslotList = timeslotList;
+        this.roomList = roomList;
     }
 
-    public MeetingConstraintConfiguration getConstraintConfiguration() {
-        return constraintConfiguration;
+    // ************************************************************************
+    // Getters and setters
+    // ************************************************************************
+    public SolverStatus getSolverStatus() {
+        return solverStatus;
     }
 
-    public void setConstraintConfiguration(MeetingConstraintConfiguration constraintConfiguration) {
-        this.constraintConfiguration = constraintConfiguration;
+    public void setSolverStatus(SolverStatus solverStatus) {
+        this.solverStatus = solverStatus;
     }
-//TODO remove it when implementing with db
-    public void setId(Long id) {
-        this.id = id;
-    }
+
     public List<Meeting> getMeetingList() {
         return meetingList;
     }
@@ -64,20 +53,12 @@ public class MeetingSchedule extends AbstractPersistable {
         this.meetingList = meetingList;
     }
 
-    public List<Day> getDayList() {
-        return dayList;
+    public List<Timeslot> getTimeGrainList() {
+        return timeslotList;
     }
 
-    public void setDayList(List<Day> dayList) {
-        this.dayList = dayList;
-    }
-
-    public List<TimeGrain> getTimeGrainList() {
-        return timeGrainList;
-    }
-
-    public void setTimeGrainList(List<TimeGrain> timeGrainList) {
-        this.timeGrainList = timeGrainList;
+    public void setTimeGrainList(List<Timeslot> timeslotList) {
+        this.timeslotList = timeslotList;
     }
 
     public List<Room> getRoomList() {
@@ -88,30 +69,6 @@ public class MeetingSchedule extends AbstractPersistable {
         this.roomList = roomList;
     }
 
-    public List<Person> getPersonList() {
-        return personList;
-    }
-
-    public void setPersonList(List<Person> personList) {
-        this.personList = personList;
-    }
-
-    public List<Attendance> getAttendanceList() {
-        return attendanceList;
-    }
-
-    public void setAttendanceList(List<Attendance> attendanceList) {
-        this.attendanceList = attendanceList;
-    }
-
-    public List<MeetingAssignment> getMeetingAssignmentList() {
-        return meetingAssignmentList;
-    }
-
-    public void setMeetingAssignmentList(List<MeetingAssignment> meetingAssignmentList) {
-        this.meetingAssignmentList = meetingAssignmentList;
-    }
-
     public HardMediumSoftScore getScore() {
         return score;
     }
@@ -119,4 +76,5 @@ public class MeetingSchedule extends AbstractPersistable {
     public void setScore(HardMediumSoftScore score) {
         this.score = score;
     }
+
 }

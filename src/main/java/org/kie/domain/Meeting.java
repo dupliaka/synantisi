@@ -1,14 +1,19 @@
 package org.kie.domain;
 
-
-import org.optaplanner.core.api.domain.lookup.PlanningId;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.util.List;
 
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@PlanningEntity
 @Entity
 public class Meeting {
 
@@ -17,24 +22,32 @@ public class Meeting {
     @PlanningId
     protected Long id;
     private String topic;
-    private List<Person> speakerList;
-    private String content;
-    private boolean entireGroupMeeting;
-    /**
-     * Multiply by {@link TimeGrain#GRAIN_LENGTH_IN_MINUTES} to get duration in minutes.
-     */
-    private int durationInGrains;
-    private List<RequiredAttendance> requiredAttendanceList;
-
+    private String speaker;
+    private String attendees;
+    @PlanningVariable(valueRangeProviderRefs = "timeslotRange")
     @ManyToOne
-    private List<PreferredAttendance> preferredAttendanceList;
+    private Timeslot timeslot;
+    @PlanningVariable(valueRangeProviderRefs = "roomRange")
+    @ManyToOne
+    private Room room;
 
+    // No-arg constructor required for Hibernate and OptaPlanner
     public Meeting() {
     }
 
-    public Meeting(String topic, int durationInGrains) {
+    public Meeting(String topic, String speaker, String attendance) {
         this.topic = topic;
-        this.durationInGrains = durationInGrains;
+        this.speaker = speaker;
+        this.attendees = attendance;
+    }
+
+    public Meeting(Long id, String topic, String speaker, String attendees, Timeslot timeslot, Room room) {
+        this.id = id;
+        this.topic = topic;
+        this.speaker = speaker;
+        this.attendees = attendees;
+        this.timeslot = timeslot;
+        this.room = room;
     }
 
     public String getTopic() {
@@ -45,76 +58,44 @@ public class Meeting {
         this.topic = topic;
     }
 
-    public List<Person> getSpeakerList() {
-        return speakerList;
+    public String getSpeaker() {
+        return speaker;
     }
 
-    public void setSpeakerList(List<Person> speakerList) {
-        this.speakerList = speakerList;
+    public void setSpeaker(String speaker) {
+        this.speaker = speaker;
     }
 
-    public String getContent() {
-        return content;
+    public String getAttendees() {
+        return attendees;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setAttendees(String attendees) {
+        this.attendees = attendees;
     }
 
-    public boolean isEntireGroupMeeting() {
-        return entireGroupMeeting;
-    }
-
-    public void setEntireGroupMeeting(boolean entireGroupMeeting) {
-        this.entireGroupMeeting = entireGroupMeeting;
-    }
-
-    public int getDurationInGrains() {
-        return durationInGrains;
-    }
-
-    public void setDurationInGrains(int durationInGrains) {
-        this.durationInGrains = durationInGrains;
-    }
-
-    public List<RequiredAttendance> getRequiredAttendanceList() {
-        return requiredAttendanceList;
-    }
-
-    public void setRequiredAttendanceList(List<RequiredAttendance> requiredAttendanceList) {
-        this.requiredAttendanceList = requiredAttendanceList;
-    }
-
-    public List<PreferredAttendance> getPreferredAttendanceList() {
-        return preferredAttendanceList;
-    }
-
-    public void setPreferredAttendanceList(List<PreferredAttendance> preferredAttendanceList) {
-        this.preferredAttendanceList = preferredAttendanceList;
-    }
-
-    // ************************************************************************
-    // Complex methods
-    // ************************************************************************
-
-    public int getRequiredCapacity() {
-        return requiredAttendanceList.size() + preferredAttendanceList.size();
-    }
-
-    public String getDurationString() {
-        return (durationInGrains * TimeGrain.GRAIN_LENGTH_IN_MINUTES) + " minutes";
-    }
-
-    public String getLabel() {
-        return topic;
-    }
-
-    @Override
-    public String toString() {
-        return topic;
+    @JsonIgnore
+    public List<String> getAttendeesList() {
+        return List.of(attendees.split(", "));
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Timeslot getTimeslot() {
+        return timeslot;
+    }
+
+    public void setTimeslot(Timeslot timeslot) {
+        this.timeslot = timeslot;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }
