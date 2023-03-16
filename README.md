@@ -23,6 +23,14 @@ sdk install java
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
+<<<<<<< h2
+=======
+The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+
+http://localhost:8080
+
+![Synantisi home](https://github.com/dupliaka/synantisi/blob/main/src/main/resources/synantisi.jpg)
+>>>>>>> main
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
