@@ -24,6 +24,7 @@ public class Meeting {
     private String topic;
     private String speaker;
     private String attendees;
+    private String sessionId;
     @PlanningVariable(valueRangeProviderRefs = "timeslotRange")
     @ManyToOne
     private Timeslot timeslot;
@@ -35,19 +36,33 @@ public class Meeting {
     public Meeting() {
     }
 
-    public Meeting(String topic, String speaker, String attendance) {
-        this.topic = topic;
-        this.speaker = speaker;
-        this.attendees = attendance;
+    @JsonIgnore
+    public List<String> getAttendeesList() {
+        return List.of(attendees.split(", "));
     }
 
-    public Meeting(Long id, String topic, String speaker, String attendees, Timeslot timeslot, Room room) {
+    public Meeting(String topic, String speaker, String attendees) {
+        this.topic = topic;
+        this.speaker = speaker;
+        this.attendees = attendees;
+    }
+
+    public Meeting(Long id, String topic, String speaker, String attendees, String sessionId, Timeslot timeslot, Room room) {
         this.id = id;
         this.topic = topic;
         this.speaker = speaker;
         this.attendees = attendees;
+        this.sessionId = sessionId;
         this.timeslot = timeslot;
         this.room = room;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTopic() {
@@ -74,13 +89,12 @@ public class Meeting {
         this.attendees = attendees;
     }
 
-    @JsonIgnore
-    public List<String> getAttendeesList() {
-        return List.of(attendees.split(", "));
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public Long getId() {
-        return id;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public Timeslot getTimeslot() {

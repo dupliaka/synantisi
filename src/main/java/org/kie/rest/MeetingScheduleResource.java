@@ -2,10 +2,12 @@ package org.kie.rest;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.kie.SessionController;
 import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
 import org.kie.domain.MeetingSchedule;
@@ -16,13 +18,16 @@ import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.SolverStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.quarkus.panache.common.Sort;
 
 @Path("schedule")
 public class MeetingScheduleResource {
-    public static final Long SINGLETON_TIME_TABLE_ID = 1L;
 
+    public static final Long SINGLETON_TIME_TABLE_ID = 1L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeetingScheduleResource.class);
     @Inject
     TimeslotRepository timeslotRepository;
     @Inject
@@ -31,48 +36,51 @@ public class MeetingScheduleResource {
     MeetingRepository meetingRepository;
 
     @Inject
+    SessionController sessionController;
+    @Inject
     DemoDataGenerator demoDataGenerator;
     @Inject
-    SolverManager<MeetingSchedule, Long> solverManager;
+    SolverManager<MeetingSchedule, String> solverManager;
     @Inject
     ScoreManager<MeetingSchedule, HardSoftScore> scoreManager;
 
     @GET
-    public MeetingSchedule getMeetingSchedule() {
-        // Get the solver status before loading the solution
-        // to avoid the race condition that the solver terminates between them
-        SolverStatus solverStatus = getSolverStatus();
-        MeetingSchedule solution = findById(SINGLETON_TIME_TABLE_ID);
-        scoreManager.updateScore(solution); // Sets the score
+
+    public MeetingSchedule getMeetingSchedule(@CookieParam("JSESSIONID") String sessionId) {
+        sessionController.setSessionId(sessionId);//Session controller initialisation
+        SolverStatus solverStatus = getSolverStatus(sessionId);
+        MeetingSchedule solution = findById(sessionId);
+        scoreManager.updateScore(solution);
         solution.setSolverStatus(solverStatus);
         return solution;
     }
 
     @POST
     @Path("demo")
-    public void uploadDemoData() {
-        demoDataGenerator.generateDemoData();
+
+    public void uploadDemoData(@CookieParam("JSESSIONID") String sessionId) {
+        LOGGER.info("Session " + sessionId);
+
+        if (meetingRepository.findBySessionId(sessionId).isEmpty()) {
+            demoDataGenerator.generateDemoData(sessionId);
+        }
     }
 
     @POST
     @Path("solve")
-    public void solve() {
-        solverManager.solveAndListen(SINGLETON_TIME_TABLE_ID,
+
+    public void solve(@CookieParam("JSESSIONID") String sessionId) {
+        solverManager.solveAndListen(sessionId,
                 this::findById,
                 this::save);
     }
 
     @Transactional
-    protected MeetingSchedule findById(Long id) {
-        if (!SINGLETON_TIME_TABLE_ID.equals(id)) {
-            throw new IllegalStateException("There is no timeTable with id (" + id + ").");
-        }
-        // Occurs in a single transaction, so each initialized meeting references the same timeslot/room instance
-        // that is contained by the timeTable's timeslotList/roomList.
+    protected MeetingSchedule findById(String sessionId) {
         return new MeetingSchedule(
-                meetingRepository.listAll(Sort.by("id")),
-                timeslotRepository.listAll(Sort.by("dayOfWeek").and("startTime").and("endTime").and("id")),
-                roomRepository.listAll(Sort.by("name").and("id")));
+                meetingRepository.list("sessionId", Sort.by("id"), sessionId),
+                timeslotRepository.list("sessionId", Sort.by("dayOfWeek").and("startTime").and("endTime").and("id"), sessionId),
+                roomRepository.list("sessionId", Sort.by("name").and("id"), sessionId));
     }
 
     @Transactional
@@ -85,13 +93,13 @@ public class MeetingScheduleResource {
         }
     }
 
-    public SolverStatus getSolverStatus() {
-        return solverManager.getSolverStatus(SINGLETON_TIME_TABLE_ID);
+    public SolverStatus getSolverStatus(String sessionId) {
+        return solverManager.getSolverStatus(sessionId);
     }
 
     @POST
     @Path("stopSolving")
-    public void stopSolving() {
-        solverManager.terminateEarly(SINGLETON_TIME_TABLE_ID);
+    public void stopSolving(@CookieParam("JSESSIONID") String sessionId) {
+        solverManager.terminateEarly(sessionId);
     }
 }

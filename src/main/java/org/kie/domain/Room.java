@@ -16,11 +16,14 @@ public class Room {
 
     private String name;
 
+    private String sessionId;
+
     public Room() {
     }
 
-    public Room(String name) {
+    public Room(String name, String sessionId) {
         this.name = name;
+        this.sessionId = sessionId;
     }
 
     public Room(Long id, String name) {
@@ -38,6 +41,14 @@ public class Room {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     @Override

@@ -27,9 +27,9 @@ public class MeetingSchedulerConstraintProviderTest {
 
     @Test
     void roomConflict() {
-        Meeting firstmeeting = new Meeting(1L, "Subject1", "Speaker1", "Attendees1", TIMESLOT1, ROOM1);
-        Meeting conflictingmeeting = new Meeting(2L, "Subject2", "Speaker2", "Attendees2", TIMESLOT1, ROOM1);
-        Meeting nonConflictingMeeting = new Meeting(3L, "Subject3", "Speaker3", "Attendees3", TIMESLOT2, ROOM1);
+        Meeting firstmeeting = new Meeting(1L, "Subject1", "Speaker1", "Attendees1", "sessionid1", TIMESLOT1, ROOM1);
+        Meeting conflictingmeeting = new Meeting(2L, "Subject2", "Speaker2", "Attendees2", "sessionid1", TIMESLOT1, ROOM1);
+        Meeting nonConflictingMeeting = new Meeting(3L, "Subject3", "Speaker3", "Attendees3", "sessionid1", TIMESLOT2, ROOM1);
         constraintVerifier.verifyThat(MeetingScheduleConstraintProvider::roomConflict)
                 .given(firstmeeting, conflictingmeeting, nonConflictingMeeting)
                 .penalizesBy(1);
@@ -38,9 +38,9 @@ public class MeetingSchedulerConstraintProviderTest {
     @Test
     void speakerConflict() {
         String conflictingSpeaker = "Speaker1";
-        Meeting firstMeeting = new Meeting(1L, "Subject1", conflictingSpeaker, "Attendees1", TIMESLOT1, ROOM1);
-        Meeting conflictingMeeting = new Meeting(2L, "Subject2", conflictingSpeaker, "Attendees2", TIMESLOT1, ROOM2);
-        Meeting nonConflictingMeeting = new Meeting(3L, "Subject3", "Speaker2", "Attendees3", TIMESLOT2, ROOM1);
+        Meeting firstMeeting = new Meeting(1L, "Subject1", conflictingSpeaker, "Attendees1", "sessionid1", TIMESLOT1, ROOM1);
+        Meeting conflictingMeeting = new Meeting(2L, "Subject2", conflictingSpeaker, "Attendees2", "sessionid1", TIMESLOT1, ROOM2);
+        Meeting nonConflictingMeeting = new Meeting(3L, "Subject3", "Speaker2", "Attendees3", "sessionid1", TIMESLOT2, ROOM1);
         constraintVerifier.verifyThat(MeetingScheduleConstraintProvider::speakerConflict)
                 .given(firstMeeting, conflictingMeeting, nonConflictingMeeting)
                 .penalizesBy(1);
@@ -49,9 +49,9 @@ public class MeetingSchedulerConstraintProviderTest {
     @Test
     void attendanceConflict() {
         String attendees = "Attendees1";
-        Meeting firstMeeting = new Meeting(1L, "Subject1", "Speaker1", attendees, TIMESLOT1, ROOM1);
-        Meeting conflictingMeeting = new Meeting(2L, "Subject2", "Speaker2", attendees, TIMESLOT1, ROOM2);
-        Meeting nonConflictingMeeting = new Meeting(3L, "Subject3", "Speaker3", "Attendees2", TIMESLOT2, ROOM1);
+        Meeting firstMeeting = new Meeting(1L, "Subject1", "Speaker1", attendees, "sessionid1", TIMESLOT1, ROOM1);
+        Meeting conflictingMeeting = new Meeting(2L, "Subject2", "Speaker2", attendees, "sessionid1", TIMESLOT1, ROOM2);
+        Meeting nonConflictingMeeting = new Meeting(3L, "Subject3", "Speaker3", "Attendees2", "sessionid1", TIMESLOT2, ROOM1);
         constraintVerifier.verifyThat(MeetingScheduleConstraintProvider::attendanceConflict)
                 .given(firstMeeting, conflictingMeeting, nonConflictingMeeting)
                 .penalizesBy(1);

@@ -20,6 +20,8 @@ public class Timeslot {
     private LocalTime startTime;
     private LocalTime endTime;
 
+    private String sessionId;
+
     // No-arg constructor required for Hibernate
     public Timeslot() {
     }
@@ -33,6 +35,11 @@ public class Timeslot {
     public Timeslot(Long id, DayOfWeek dayOfWeek, LocalTime startTime) {
         this(dayOfWeek, startTime, startTime.plusMinutes(50));
         this.id = id;
+    }
+
+    public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String sessionId) {
+        this(dayOfWeek, startTime, endTime);
+        this.sessionId = sessionId;
     }
 
     @Override

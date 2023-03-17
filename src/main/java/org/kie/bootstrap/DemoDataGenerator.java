@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -17,15 +17,15 @@ import org.kie.persistence.MeetingRepository;
 import org.kie.persistence.RoomRepository;
 import org.kie.persistence.TimeslotRepository;
 
-@ApplicationScoped
+@SessionScoped
 public class DemoDataGenerator {
-    private static final List<DayOfWeek> DAY_OF_WEEK_LIST = List.of(
+    private final List<DayOfWeek> DAY_OF_WEEK_LIST = List.of(
             DayOfWeek.MONDAY,
             DayOfWeek.TUESDAY,
             DayOfWeek.WEDNESDAY,
             DayOfWeek.THURSDAY,
             DayOfWeek.FRIDAY);
-    private static final List<LocalTime> START_TIME_LIST = List.of(
+    private final List<LocalTime> START_TIME_LIST = List.of(
             LocalTime.of(8, 30),
             LocalTime.of(9, 30),
             LocalTime.of(10, 30),
@@ -34,7 +34,7 @@ public class DemoDataGenerator {
             LocalTime.of(11, 30),
             LocalTime.of(15, 30),
             LocalTime.of(16, 30));
-    private static final List<Meeting> MEETING_LIST = List.of(
+    private final List<Meeting> MEETING_LIST = List.of(
             new Meeting("Code like a Boss", "L.Torvalds", "E.Mask, M.Zuckerberg"),
             new Meeting("Geek out with Open Source", "R.Stallman", "J.Bezos"),
             new Meeting("The future of Open Source Infrastructure", "S.Hykes", "T.Hicks, P.Cormier"),
@@ -49,7 +49,8 @@ public class DemoDataGenerator {
     int meetingCount;
 
     @Transactional
-    public void generateDemoData() {
+    public void generateDemoData(String sessionId) {
+
         if (meetingCount == 0) {
             return;
         }
@@ -65,7 +66,7 @@ public class DemoDataGenerator {
         for (DayOfWeek dayOfWeek : DAY_OF_WEEK_LIST.subList(0, dayOfWeekCount)) {
             for (LocalTime startTime : START_TIME_LIST.subList(0, startTimeCount)) {
                 LocalTime endTime = startTime.plusHours(1);
-                timeslotList.add(new Timeslot(dayOfWeek, startTime, endTime));
+                timeslotList.add(new Timeslot(dayOfWeek, startTime, endTime, sessionId));
             }
         }
         timeslotRepository.persist(timeslotList);
@@ -74,11 +75,13 @@ public class DemoDataGenerator {
         for (int i = 0; i < roomCount; i++) {
             // Few rooms: A, B, C, ... - Many rooms: AA, AB, AC, ...
             String name = "Room " + Character.toString(roomCount <= 26 ? ('A' + i) : ('A' + (i / 26)) + ('A' + (i % 26)));
-            roomList.add(new Room(name));
+            roomList.add(new Room(name, sessionId));
         }
         roomRepository.persist(roomList);
 
         List<Meeting> meetingList = MEETING_LIST.subList(0, meetingCount);
-        meetingRepository.persist(meetingList);
+        meetingList.forEach(s->s.setSessionId(sessionId));
+
+        meetingRepository. persist(MEETING_LIST);
     }
 }
