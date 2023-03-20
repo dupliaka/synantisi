@@ -53,11 +53,11 @@ public class MeetingSchedule {
         this.meetingList = meetingList;
     }
 
-    public List<Timeslot> getTimeGrainList() {
+    public List<Timeslot> getTimeSlotList() {
         return timeslotList;
     }
 
-    public void setTimeGrainList(List<Timeslot> timeslotList) {
+    public void setTimeSlotList(List<Timeslot> timeslotList) {
         this.timeslotList = timeslotList;
     }
 

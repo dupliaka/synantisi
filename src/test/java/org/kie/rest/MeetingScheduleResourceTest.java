@@ -31,7 +31,7 @@ class MeetingScheduleResourceTest {
         MeetingSchedule meetingSchedule = getSchedule();
 
         assertFalse(meetingSchedule.getMeetingList().isEmpty());
-        assertFalse(meetingSchedule.getTimeGrainList().isEmpty());
+        assertFalse(meetingSchedule.getTimeSlotList().isEmpty());
         assertFalse(meetingSchedule.getRoomList().isEmpty());
         assertFalse(meetingSchedule.getScore().isZero());
 
@@ -41,9 +41,9 @@ class MeetingScheduleResourceTest {
 
         assertEquals("Room A", meetingSchedule.getRoomList().get(0).getName());
 
-        assertEquals("MONDAY", meetingSchedule.getTimeGrainList().get(0).getDayOfWeek().name());
-        assertEquals("09:30", meetingSchedule.getTimeGrainList().get(0).getEndTime().toString());
-        assertEquals("08:30", meetingSchedule.getTimeGrainList().get(0).getStartTime().toString());
+        assertEquals("MONDAY", meetingSchedule.getTimeSlotList().get(0).getDayOfWeek().name());
+        assertEquals("09:30", meetingSchedule.getTimeSlotList().get(0).getEndTime().toString());
+        assertEquals("08:30", meetingSchedule.getTimeSlotList().get(0).getStartTime().toString());
     }
 
     @Order(2)

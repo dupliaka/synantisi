@@ -15,15 +15,21 @@ public class Room {
     private Long id;
 
     private String name;
-
+    private Integer capacity;
     private String sessionId;
 
     public Room() {
     }
 
-    public Room(String name, String sessionId) {
+    public Room(String name, Integer capacity, String sessionId) {
         this.name = name;
         this.sessionId = sessionId;
+        this.capacity = capacity;
+    }
+
+    public Room(String name, Integer capacity) {
+        this.name = name;
+        this.capacity = capacity;
     }
 
     public Room(Long id, String name) {
@@ -49,6 +55,14 @@ public class Room {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
     }
 
     @Override

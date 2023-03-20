@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.kie.SessionController;
 import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
@@ -56,7 +57,6 @@ public class MeetingScheduleResource {
 
     @POST
     @Path("demo")
-
     public void uploadDemoData(@CookieParam("JSESSIONID") String sessionId) {
         LOGGER.info("Session " + sessionId);
         if (meetingRepository.findBySessionId(sessionId).isEmpty()) {

@@ -75,7 +75,7 @@ public class DemoDataGenerator {
         for (int i = 0; i < roomCount; i++) {
             // Few rooms: A, B, C, ... - Many rooms: AA, AB, AC, ...
             String name = "Room " + Character.toString(roomCount <= 26 ? ('A' + i) : ('A' + (i / 26)) + ('A' + (i % 26)));
-            roomList.add(new Room(name, sessionId));
+            roomList.add(new Room(name,30, sessionId));
         }
         roomRepository.persist(roomList);
 
