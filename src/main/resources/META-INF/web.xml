@@ -4,7 +4,7 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-    <display-name>My Web Application</display-name>
+    <display-name>Synantisi</display-name>
 
     <servlet>
         <servlet-name>h2-console</servlet-name>
@@ -15,5 +15,8 @@
         <servlet-name>h2-console</servlet-name>
         <url-pattern>/h2/*</url-pattern>
     </servlet-mapping>
-
+<!--session config in minutes-->
+<!--    <session-config>-->
+<!--        <session-timeout>1</session-timeout>-->
+<!--    </session-config>-->
 </web-app>

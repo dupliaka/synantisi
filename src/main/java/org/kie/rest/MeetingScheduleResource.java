@@ -26,7 +26,6 @@ import io.quarkus.panache.common.Sort;
 @Path("schedule")
 public class MeetingScheduleResource {
 
-    public static final Long SINGLETON_TIME_TABLE_ID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(MeetingScheduleResource.class);
     @Inject
     TimeslotRepository timeslotRepository;
@@ -60,7 +59,6 @@ public class MeetingScheduleResource {
 
     public void uploadDemoData(@CookieParam("JSESSIONID") String sessionId) {
         LOGGER.info("Session " + sessionId);
-
         if (meetingRepository.findBySessionId(sessionId).isEmpty()) {
             demoDataGenerator.generateDemoData(sessionId);
         }
