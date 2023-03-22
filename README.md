@@ -18,7 +18,7 @@ sdk install java
 
 ## Usage
 
-![synantisi](http://github.com/dupliaka/synantisi/src/main/resources/synantisi.gif)
+![synantisi](http://github.com/dupliaka/synantisi/src/main/resources/META-INF/resources/synantisi.gif)
 
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar

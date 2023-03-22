@@ -34,6 +34,7 @@ public class SessionController {
         this.problemId = problemId;
         this.sessionId = sessionId;
     }
+    public void init(){}
 
     public UUID getProblemId() {
         return problemId;

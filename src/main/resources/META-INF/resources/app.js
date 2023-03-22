@@ -47,8 +47,27 @@ $(document).ready(function () {
       loadDemoData();
     });
 
-    refreshTimeTable();
+    $("#getStartedButton").click(function () {
+      getStartedButton();
+    });
+
+    if (getCookie("JSESSIONID") == undefined) {
+        $("#greetingsDialog").modal('toggle');
+    }
+    else {
+        refreshTimeTable();
+    }
 });
+
+function getStartedButton(){
+    $("#greetingsDialog").modal('toggle');
+
+    $.post("/schedule/session", function () {
+       refreshTimeTable();
+     }).fail(function (xhr, ajaxOptions, thrownError) {
+      showError("Session failed.", xhr);
+    });
+}
 
 function convertToId(str) {
   // Base64 encoding without padding to avoid XSS

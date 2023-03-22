@@ -1,5 +1,6 @@
 package org.kie.rest;
 
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.CookieParam;
@@ -7,7 +8,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.kie.SessionController;
 import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
@@ -19,15 +19,10 @@ import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.SolverStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.quarkus.panache.common.Sort;
-
 @Path("schedule")
 public class MeetingScheduleResource {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeetingScheduleResource.class);
     @Inject
     TimeslotRepository timeslotRepository;
     @Inject
@@ -61,10 +56,17 @@ public class MeetingScheduleResource {
     @POST
     @Path("demo")
     public void uploadDemoData(@CookieParam("JSESSIONID") String sessionId) {
-        LOGGER.info("Session " + sessionId);
+        if (sessionId == null){
+            throw new IllegalStateException("Undefined Session Id");
+        }
         if (meetingRepository.findBySessionId(sessionId).isEmpty()) {
             demoDataGenerator.generateDemoData(sessionId);
         }
+    }
+    @POST
+    @Path("session")
+    public void sessionStart() {
+        sessionController.init();
     }
 
     @POST
