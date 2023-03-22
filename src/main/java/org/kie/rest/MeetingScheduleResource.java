@@ -47,6 +47,9 @@ public class MeetingScheduleResource {
     @GET
 
     public MeetingSchedule getMeetingSchedule(@CookieParam("JSESSIONID") String sessionId) {
+        if (sessionId == null){
+            throw new IllegalStateException("Undefined Session Id");
+        }
         sessionController.setSessionId(sessionId);//Session controller initialisation
         SolverStatus solverStatus = getSolverStatus(sessionId);
         MeetingSchedule solution = findById(sessionId);
@@ -66,7 +69,6 @@ public class MeetingScheduleResource {
 
     @POST
     @Path("solve")
-
     public void solve(@CookieParam("JSESSIONID") String sessionId) {
         solverManager.solveAndListen(sessionId,
                 this::findById,

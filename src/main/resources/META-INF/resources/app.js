@@ -141,7 +141,7 @@ function refreshTimeTable() {
     const tbodyByRoom = $("<tbody>").appendTo(scheduleByRoom);
     const tbodyByTopic = $("<tbody>").appendTo(scheduleByTopic);
     const tbodyByStudentGroup = $("<tbody>").appendTo(scheduleByAttendees);
-    $.each(timeTable.timeGrainList, (index, timeslot) => {
+    $.each(timeTable.timeSlotList, (index, timeslot) => {
       const rowByRoom = $("<tr>").appendTo(tbodyByRoom);
       rowByRoom
         .append($(`<th class="align-middle"/>`)
@@ -250,7 +250,8 @@ function addMeeting() {
   $.post("/meetings", JSON.stringify({
     "topic": topic,
     "speaker": $("#meeting_speaker").val().trim(),
-    "attendees": $("#meeting_attendees").val().trim()
+    "attendees": $("#meeting_attendees").val().trim(),
+    "sessionId": getCookie("JSESSIONID")
   }), function () {
     refreshTimeTable();
   }).fail(function (xhr, ajaxOptions, thrownError) {
@@ -271,7 +272,8 @@ function addTimeslot() {
   $.post("/timeslots", JSON.stringify({
     "dayOfWeek": $("#timeslot_dayOfWeek").val().trim().toUpperCase(),
     "startTime": $("#timeslot_startTime").val().trim(),
-    "endTime": $("#timeslot_endTime").val().trim()
+    "endTime": $("#timeslot_endTime").val().trim(),
+    "sessionId": getCookie("JSESSIONID")
   }), function () {
     refreshTimeTable();
   }).fail(function (xhr, ajaxOptions, thrownError) {
@@ -291,7 +293,8 @@ function deleteTimeslot(timeslot) {
 function addRoom() {
   var name = $("#room_name").val().trim();
   $.post("/rooms", JSON.stringify({
-    "name": name
+    "name": name,
+    "sessionId": getCookie("JSESSIONID")
   }), function () {
     refreshTimeTable();
   }).fail(function (xhr, ajaxOptions, thrownError) {
@@ -379,4 +382,10 @@ function buildPercentageColor(floorColor, ceilColor, shadePercentage) {
   let green = (floorColor & 0x00FF00) + Math.floor(shadePercentage * ((ceilColor & 0x00FF00) - (floorColor & 0x00FF00))) & 0x00FF00;
   let blue = (floorColor & 0x0000FF) + Math.floor(shadePercentage * ((ceilColor & 0x0000FF) - (floorColor & 0x0000FF))) & 0x0000FF;
   return red | green | blue;
+}
+
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
 }

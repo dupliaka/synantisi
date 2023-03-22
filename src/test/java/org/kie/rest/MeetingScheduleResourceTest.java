@@ -11,6 +11,8 @@ import org.kie.domain.Meeting;
 import org.kie.domain.MeetingSchedule;
 
 import io.quarkus.test.junit.QuarkusTest;
+import org.optaplanner.core.api.solver.SolverStatus;
+
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -18,6 +20,7 @@ class MeetingScheduleResourceTest {
 
     private static MeetingSchedule getSchedule() {
         return given()
+                .cookie("JSESSIONID","dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI")
                 .when()
                 .get("/schedule")
                 .then()
@@ -51,15 +54,23 @@ class MeetingScheduleResourceTest {
     void solve() throws InterruptedException {
 
         given()
+                .cookie("JSESSIONID","dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI")
                 .when()
                 .post("/schedule/solve")
                 .then()
                 .statusCode(204);
 
         //the solving time is set in properties and usually gets interrupted by the user
-        Thread.sleep(100L);
+        MeetingSchedule meetingSchedule;
+        do { // Use do-while to give the solver some time and avoid retrieving an early infeasible solution.
+            // Quick polling (not a Test Thread Sleep anti-pattern)
+            // Test is still fast on fast machines and doesn't randomly fail on slow machines.
+            Thread.sleep(20L);
+            meetingSchedule = getSchedule();
+        } while (meetingSchedule.getSolverStatus() != SolverStatus.NOT_SOLVING || !meetingSchedule.getScore().isFeasible());
 
         given()
+                .cookie("JSESSIONID","dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI")
                 .when()
                 .post("/schedule/stopSolving")
                 .then()
