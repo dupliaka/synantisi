@@ -141,8 +141,8 @@ function refreshTimeTable() {
     const theadByTopic = $("<thead>").appendTo(scheduleByTopic);
     const headerRowByTopic = $("<tr>").appendTo(theadByTopic);
     headerRowByTopic.append($("<th>Timeslot</th>"));
-    const teacherList = [...new Set(timeTable.meetingList.map(meeting => meeting.speaker))];
-    $.each(teacherList, (index, topic) => {
+    const speakerList = [...new Set(timeTable.meetingList.map(meeting => meeting.speaker))];
+    $.each(speakerList, (index, topic) => {
       headerRowByTopic
         .append($("<th/>")
           .append($("<span/>").text(topic)));
@@ -186,7 +186,7 @@ function refreshTimeTable() {
                     -
                     ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
                 `)));
-      $.each(teacherList, (index, topic) => {
+      $.each(speakerList, (index, topic) => {
         rowByTopic.append($("<td/>").prop("id", `timeslot${timeslot.id}teacher${convertToId(topic)}`));
       });
 
@@ -211,7 +211,7 @@ function refreshTimeTable() {
           .append($(`<h5 class="card-title mb-1"/>`).text(meeting.topic))
           .append($(`<p class="card-text ml-2 mb-1"/>`)
             .append($(`<em/>`).text(`by ${meeting.speaker}`)))
-          .append($(`<small class="ml-2 mt-1 card-text text-muted align-bottom float-right"/>`).text(meeting.id))
+          .append($(`<small class="ml-2 mt-1 card-text text-muted align-bottom float-right"/>`).text(meeting.priority))
           .append($(`<p class="card-text ml-2"/>`).text(meeting.attendees)));
       const meetingElement = meetingElementWithoutDelete.clone();
       meetingElement.find(".card-body").prepend(
@@ -270,6 +270,7 @@ function addMeeting() {
     "topic": topic,
     "speaker": $("#meeting_speaker").val().trim(),
     "attendees": $("#meeting_attendees").val().trim(),
+    "priority": $("#meeting_priority").val().trim(),
     "sessionId": getCookie("JSESSIONID")
   }), function () {
     refreshTimeTable();
