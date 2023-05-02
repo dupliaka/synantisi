@@ -24,6 +24,7 @@ public class Meeting {
     private String topic;
     private String speaker;
     private String attendees;
+    private Long priority;
     private String sessionId;
     @PlanningVariable(valueRangeProviderRefs = "timeslotRange")
     @ManyToOne
@@ -41,13 +42,14 @@ public class Meeting {
         return List.of(attendees.split(", "));
     }
 
-    public Meeting(String topic, String speaker, String attendees) {
+    public Meeting(String topic, String speaker, String attendees, Long priority) {
         this.topic = topic;
         this.speaker = speaker;
         this.attendees = attendees;
+        this.priority = priority;
     }
 
-    public Meeting(Long id, String topic, String speaker, String attendees, String sessionId, Timeslot timeslot, Room room) {
+    public Meeting(Long id, String topic, String speaker, String attendees, String sessionId, Long priority, Timeslot timeslot, Room room) {
         this.id = id;
         this.topic = topic;
         this.speaker = speaker;
@@ -55,6 +57,7 @@ public class Meeting {
         this.sessionId = sessionId;
         this.timeslot = timeslot;
         this.room = room;
+        this.priority = priority;
     }
 
     public Long getId() {
@@ -111,5 +114,13 @@ public class Meeting {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public Long getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Long priority) {
+        this.priority = priority;
     }
 }

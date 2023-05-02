@@ -1,12 +1,16 @@
 package org.kie.domain;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @Entity
@@ -19,7 +23,7 @@ public class Timeslot {
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
-
+    static private LocalDateTime f2fStartDate = LocalDateTime.of(2023,3,6,0,0);// TODO: set F2F period in the beginning of the session
     private String sessionId;
 
     // No-arg constructor required for Hibernate
@@ -36,6 +40,8 @@ public class Timeslot {
         this(dayOfWeek, startTime, startTime.plusMinutes(50));
         this.id = id;
     }
+
+
 
     public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String sessionId) {
         this(dayOfWeek, startTime, endTime);
@@ -74,4 +80,20 @@ public class Timeslot {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
+
+    @JsonIgnore
+    public LocalDateTime getStartDateTime(){
+
+        int daysToAdd = dayOfWeek.getValue() - f2fStartDate.getDayOfWeek().getValue();
+        if (daysToAdd < 0) {
+            daysToAdd += 7;
+        }
+
+        return startTime.atDate(LocalDate.from(f2fStartDate.plusDays(daysToAdd)));
+    }
+    @JsonIgnore
+    public int getTimeDifferenceFromStartDate(){
+        return Math.toIntExact(Math.abs(ChronoUnit.HOURS.between(getStartDateTime(), f2fStartDate)));
+    }
+
 }

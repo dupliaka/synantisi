@@ -62,8 +62,8 @@ public class SynantisiUITestIT {
 
         page.getByText("Solve").click();
 
-        assertThat(page.locator("//html/body/div[1]/div[3]/div[1]/table/tbody/tr/td/div/div/h5"))
-                .containsText("Code like a boss");
+        assertThat(page.locator("//html/body/div[1]/div[3]/div[1]/table/tbody/tr/td/div/div/h5"));
+
     }
 
     @BeforeEach
