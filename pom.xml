@@ -148,6 +148,11 @@
             <version>2.24.0</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.31.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -201,6 +206,7 @@
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                                 <maven.home>${maven.home}</maven.home>
                             </systemPropertyVariables>
+                            <skipITs>false</skipITs>
                         </configuration>
                     </execution>
                 </executions>
