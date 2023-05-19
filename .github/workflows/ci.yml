@@ -19,6 +19,7 @@ jobs:
           java-version: 17
       - name: Build
         run: ./mvnw verify -B
+  #gpt-code-review-action for PR check provided by AI
   code-review:
     runs-on: ubuntu-latest
     permissions:
