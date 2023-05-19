@@ -43,10 +43,6 @@ $(document).ready(function () {
     $("#addRoomSubmitButton").click(function () {
       addRoom();
     });
-    $("#demoButton").click(function () {
-      loadDemoData();
-    });
-
     $("#getStartedButton").click(function () {
       getStartedButton();
     });
@@ -72,14 +68,6 @@ function getStartedButton(){
 function convertToId(str) {
   // Base64 encoding without padding to avoid XSS
   return btoa(str).replace(/=/g, "");
-}
-
-function loadDemoData(){
-  $.post("/schedule/demo", function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Start solving failed.", xhr);
-  });
 }
 
 function uploadUnsolved(e){

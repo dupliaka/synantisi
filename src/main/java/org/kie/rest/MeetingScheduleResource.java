@@ -21,6 +21,7 @@ import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.SolverStatus;
 
 import io.quarkus.panache.common.Sort;
+
 @Path("schedule")
 public class MeetingScheduleResource {
     @Inject
@@ -42,7 +43,7 @@ public class MeetingScheduleResource {
     @GET
 
     public MeetingSchedule getMeetingSchedule(@CookieParam("JSESSIONID") String sessionId) {
-        if (sessionId == null){
+        if (sessionId == null) {
             throw new IllegalStateException("Undefined Session Id");
         }
         sessionController.setSessionId(sessionId);//Session controller initialisation
@@ -56,13 +57,14 @@ public class MeetingScheduleResource {
     @POST
     @Path("demo")
     public void uploadDemoData(@CookieParam("JSESSIONID") String sessionId) {
-        if (sessionId == null){
+        if (sessionId == null) {
             throw new IllegalStateException("Undefined Session Id");
         }
         if (meetingRepository.findBySessionId(sessionId).isEmpty()) {
             demoDataGenerator.generateDemoData(sessionId);
         }
     }
+
     @POST
     @Path("session")
     public void sessionStart() {
