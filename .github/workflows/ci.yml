@@ -19,3 +19,14 @@ jobs:
           java-version: 17
       - name: Build
         run: ./mvnw verify -B
+  #gpt-code-review-action for PR check provided by AI
+  code-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: sshnaidm/gpt-code-review-action@v1.0
+        with:
+          openai-key: ${{ secrets.OPENAI_API_KEY }}
