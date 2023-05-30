@@ -54,10 +54,10 @@ public class SessionController {
 
     @PreDestroy
     void destroySessionData() {
-      removeSessionDataById();
+      removeSessionDataById(sessionId);
     }
     @Transactional
-    public void removeSessionDataById(){
+    public void removeSessionDataById(String sessionId) {
         meetingRepository.delete("sessionId", sessionId);
         roomRepository.delete("sessionId", sessionId);
         timeslotRepository.delete("sessionId", sessionId);

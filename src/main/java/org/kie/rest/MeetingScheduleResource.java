@@ -41,7 +41,6 @@ public class MeetingScheduleResource {
     ScoreManager<MeetingSchedule, HardSoftScore> scoreManager;
 
     @GET
-
     public MeetingSchedule getMeetingSchedule(@CookieParam("JSESSIONID") String sessionId) {
         if (sessionId == null) {
             throw new IllegalStateException("Undefined Session Id");
@@ -94,5 +93,12 @@ public class MeetingScheduleResource {
     @Path("stopSolving")
     public void stopSolving(@CookieParam("JSESSIONID") String sessionId) {
         solverManager.terminateEarly(sessionId);
+    }
+
+    @POST
+    @Path("reset")
+    @Transactional
+    public void reset(@CookieParam("JSESSIONID") String sessionId){
+        sessionController.removeSessionDataById(sessionId);
     }
 }

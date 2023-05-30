@@ -1,26 +1,28 @@
 package org.kie.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.kie.domain.Meeting;
 import org.kie.domain.MeetingSchedule;
-
 import io.quarkus.test.junit.QuarkusTest;
 import org.optaplanner.core.api.solver.SolverStatus;
 
-
 @QuarkusTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MeetingScheduleResourceTest {
+
+    public static final String JSESSIONID = "JSESSIONID";
+    public static final String SESSION_KEY = "dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI";
 
     private static MeetingSchedule getSchedule() {
         return given()
-                .cookie("JSESSIONID","dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI")
+                .cookie(JSESSIONID, SESSION_KEY)
                 .when()
                 .get("/schedule")
                 .then()
@@ -28,7 +30,15 @@ class MeetingScheduleResourceTest {
                 .extract().body().as(MeetingSchedule.class);
     }
 
-    @Order(1)
+    private static void resetSchedule() {
+        given()
+                .cookie(JSESSIONID, SESSION_KEY)
+                .when()
+                .post("/schedule/reset")
+                .then()
+                .statusCode(204);
+    }
+
     @Test
     void getMeetingSchedule() {
         MeetingSchedule meetingSchedule = getSchedule();
@@ -47,14 +57,16 @@ class MeetingScheduleResourceTest {
         assertEquals("MONDAY", meetingSchedule.getTimeSlotList().get(0).getDayOfWeek().name());
         assertEquals("09:30", meetingSchedule.getTimeSlotList().get(0).getEndTime().toString());
         assertEquals("08:30", meetingSchedule.getTimeSlotList().get(0).getStartTime().toString());
+
+        resetSchedule();
+        assertTrue(getSchedule().getMeetingList().isEmpty());
     }
 
-    @Order(2)
     @Test
     void solve() throws InterruptedException {
 
         given()
-                .cookie("JSESSIONID","dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI")
+                .cookie(JSESSIONID, SESSION_KEY)
                 .when()
                 .post("/schedule/solve")
                 .then()
@@ -70,7 +82,7 @@ class MeetingScheduleResourceTest {
         } while (meetingSchedule.getSolverStatus() != SolverStatus.NOT_SOLVING || !meetingSchedule.getScore().isFeasible());
 
         given()
-                .cookie("JSESSIONID","dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI")
+                .cookie(JSESSIONID, SESSION_KEY)
                 .when()
                 .post("/schedule/stopSolving")
                 .then()
@@ -86,4 +98,5 @@ class MeetingScheduleResourceTest {
             assertNotNull(meeting.getRoom());
         }
     }
+
 }

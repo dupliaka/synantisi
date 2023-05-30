@@ -46,6 +46,9 @@ $(document).ready(function () {
     $("#getStartedButton").click(function () {
       getStartedButton();
     });
+    $("#resetSchedule").click(function () {
+      resetSchedule();
+    });
 
     if (getCookie("JSESSIONID") == undefined) {
         $("#greetingsDialog").modal('toggle');
@@ -54,6 +57,14 @@ $(document).ready(function () {
         refreshTimeTable();
     }
 });
+
+function resetSchedule(){
+    $.post("/schedule/reset", function () {
+       refreshTimeTable();
+     }).fail(function (xhr, ajaxOptions, thrownError) {
+      showError("Reset timetable failed.", xhr);
+    });
+}
 
 function getStartedButton(){
     $("#greetingsDialog").modal('toggle');
@@ -230,10 +241,12 @@ function refreshSolvingButtons(solving) {
   if (solving) {
     $("#solveButton").hide();
     $("#stopSolvingButton").show();
+    $("#resetSchedule").hide();
     if (autoRefreshIntervalId == null) {
       autoRefreshIntervalId = setInterval(refreshTimeTable, 2000);
     }
   } else {
+    $("#resetSchedule").show();
     $("#solveButton").show();
     $("#stopSolvingButton").hide();
     if (autoRefreshIntervalId != null) {
