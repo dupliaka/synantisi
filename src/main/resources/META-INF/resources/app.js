@@ -313,7 +313,7 @@ function updateMeeting(){
             refreshTimeTable();
         },
         error: function(xhr, status, error) {
-             showError("Adding meeting (" + topic + ") failed.", xhr);
+             showError("Editing meeting (" + $('#edit_meeting_topic').val().trim() + ") failed.", xhr);
         }
     });
   $('#meetingEditDialog').modal('toggle');
