@@ -117,6 +117,42 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="meetingEditDialog" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Edit meeting <b id="edit_meeting_id"></b></h4>
+                <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="meeting_topic">Topic</label>
+                    <input class="form-control" id="edit_meeting_topic" required type="text" value="Code like a boss">
+                </div>
+                <div class="form-group">
+                    <label for="meeting_speaker">Speaker</label>
+                    <input class="form-control" id="edit_meeting_speaker" required type="text" value="J. Carmack">
+                </div>
+                <div class="form-group">
+                    <label for="meeting_attendees">Attendees (splited by " ,")</label>
+                    <input class="form-control" id="edit_meeting_attendees" required type="text" value="Sam Altman">
+                </div>
+                <div class="form-group">
+                    <label for="meeting_priority">Priority</label>
+                    <input class="form-control" id="edit_meeting_priority" required type="number" value=0>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="updateMeetingSubmitButton" type="button">Update meeting
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="timeslotDialog" role="dialog" tabindex="-1">
     <div class="modal-dialog" role="dialog">
         <div class="modal-content">
