@@ -37,6 +37,9 @@ $(document).ready(function () {
     $("#addMeetingSubmitButton").click(function () {
       addMeeting();
     });
+    $("#updateMeetingSubmitButton").click(function () {
+      updateMeeting();
+    });
     $("#addTimeslotSubmitButton").click(function () {
       addTimeslot();
     });
@@ -134,8 +137,7 @@ function refreshTimeTable() {
         .append($("<th/>")
           .append($("<span/>").text(room.name))
           .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
-            .append($(`<small class="fas fa-trash"/>`)
-            ).click(() => deleteRoom(room))));
+            .append($(`<small class="fas fa-trash"/>`)).click(() => deleteRoom(room))));
     });
     const theadByTopic = $("<thead>").appendTo(scheduleByTopic);
     const headerRowByTopic = $("<tr>").appendTo(theadByTopic);
@@ -215,9 +217,14 @@ function refreshTimeTable() {
       const meetingElement = meetingElementWithoutDelete.clone();
       meetingElement.find(".card-body").prepend(
         $(`<button type="button" class="ml-2 btn btn-light btn-sm p-1 float-right"/>`)
-          .append($(`<small class="fas fa-trash"/>`)
-          ).click(() => deleteMeeting(meeting))
+          .append($(`<small class="fas fa-pen"/>`)
+          ).click(() => editMeeting(meeting))
       );
+            meetingElement.find(".card-body").prepend(
+              $(`<button type="button" class="ml-2 btn btn-light btn-sm p-1 float-right"/>`)
+                .append($(`<small class="fas fa-trash"/>`)
+                ).click(() => deleteMeeting(meeting))
+            );
       if (meeting.timeslot == null || meeting.room == null) {
         unassignedMeetings.append(meetingElement);
       } else {
@@ -279,6 +286,37 @@ function addMeeting() {
     showError("Adding meeting (" + topic + ") failed.", xhr);
   });
   $('#scheduleDialog').modal('toggle');
+}
+
+function editMeeting(meeting) {
+  $('#edit_meeting_topic').val(meeting.topic);
+  $('#edit_meeting_speaker').val(meeting.speaker);
+  $('#edit_meeting_attendees').val(meeting.attendees);
+  $('#edit_meeting_priority').val(meeting.priority);
+  $('#edit_meeting_id').text(meeting.id);
+  $('#meetingEditDialog').modal('toggle');
+}
+
+function updateMeeting(){
+    $.ajax({
+        url: "/meetings/" + $("#edit_meeting_id").text().trim(),
+        type: "PUT",
+        data: JSON.stringify({
+            "topic":   $('#edit_meeting_topic').val().trim(),
+            "speaker": $("#edit_meeting_speaker").val().trim(),
+            "attendees": $("#edit_meeting_attendees").val().trim(),
+            "priority": $("#edit_meeting_priority").val().trim(),
+            "sessionId": getCookie("JSESSIONID")
+        }),
+        contentType: "application/json",
+        success: function(response) {
+            refreshTimeTable();
+        },
+        error: function(xhr, status, error) {
+             showError("Editing meeting (" + $('#edit_meeting_topic').val().trim() + ") failed.", xhr);
+        }
+    });
+  $('#meetingEditDialog').modal('toggle');
 }
 
 function deleteMeeting(meeting) {
