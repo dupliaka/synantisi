@@ -49,7 +49,6 @@ $(document).ready(function () {
     $("#resetSchedule").click(function () {
       resetSchedule();
     });
-
     if (getCookie("JSESSIONID") == undefined) {
         $("#greetingsDialog").modal('toggle');
     }
@@ -64,6 +63,7 @@ function resetSchedule(){
      }).fail(function (xhr, ajaxOptions, thrownError) {
       showError("Reset timetable failed.", xhr);
     });
+    $('#resetDialog').modal('toggle');
 }
 
 function getStartedButton(){
