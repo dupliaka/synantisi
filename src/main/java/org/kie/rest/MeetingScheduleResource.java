@@ -1,13 +1,16 @@
 package org.kie.rest;
 
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.kie.SessionController;
 import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
@@ -30,7 +33,6 @@ public class MeetingScheduleResource {
     RoomRepository roomRepository;
     @Inject
     MeetingRepository meetingRepository;
-
     @Inject
     SessionController sessionController;
     @Inject
@@ -40,6 +42,9 @@ public class MeetingScheduleResource {
     @Inject
     ScoreManager<MeetingSchedule, HardSoftScore> scoreManager;
 
+    @Inject
+    MeetingResource meetingResource;
+
     @GET
     public MeetingSchedule getMeetingSchedule(@CookieParam("JSESSIONID") String sessionId) {
         if (sessionId == null) {
@@ -47,10 +52,42 @@ public class MeetingScheduleResource {
         }
         sessionController.setSessionId(sessionId);//Session controller initialisation
         SolverStatus solverStatus = getSolverStatus(sessionId);
-        MeetingSchedule solution = findById(sessionId);
+        MeetingSchedule solution = findBySessionId(sessionId);
         scoreManager.updateScore(solution);
         solution.setSolverStatus(solverStatus);
         return solution;
+    }
+
+    @GET
+    @Path("share")
+    public MeetingSchedule share(@CookieParam("JSESSIONID") String sessionId){
+        return new MeetingSchedule(
+                meetingRepository.findShared(sessionId),
+                roomRepository.findShared(sessionId),
+                timeslotRepository.findShared(sessionId));
+    }
+
+    @POST
+    @Path("upload")
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void uploadMeetingSchedule(String scheduleJson, @CookieParam("JSESSIONID") String sessionId) throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        MeetingSchedule meetingSchedule = objectMapper.readValue(scheduleJson, MeetingSchedule.class);
+
+        meetingSchedule.getMeetingList()
+                .forEach(meeting -> meeting.setSessionId(sessionId));
+
+        meetingSchedule.getTimeSlotList()
+                .forEach(timeslot -> timeslot.setSessionId(sessionId));
+
+        meetingSchedule.getRoomList()
+                        .forEach(room -> room.setSessionId(sessionId));
+
+        meetingRepository.persist(meetingSchedule.getMeetingList());
+        timeslotRepository.persist(meetingSchedule.getTimeSlotList());
+        roomRepository.persist(meetingSchedule.getRoomList());
     }
 
     @POST
@@ -63,16 +100,16 @@ public class MeetingScheduleResource {
     @Path("solve")
     public void solve(@CookieParam("JSESSIONID") String sessionId) {
         solverManager.solveAndListen(sessionId,
-                this::findById,
+                this::findBySessionId,
                 this::save);
     }
 
     @Transactional
-    protected MeetingSchedule findById(String sessionId) {
+    protected MeetingSchedule findBySessionId(String sessionId) {
         return new MeetingSchedule(
                 meetingRepository.list("sessionId", Sort.by("id"), sessionId),
-                timeslotRepository.list("sessionId", Sort.by("dayOfWeek").and("startTime").and("endTime").and("id"), sessionId),
-                roomRepository.list("sessionId", Sort.by("name").and("id"), sessionId));
+                roomRepository.list("sessionId", Sort.by("name").and("id"), sessionId),
+                timeslotRepository.list("sessionId", Sort.by("dayOfWeek").and("startTime").and("endTime").and("id"), sessionId));
     }
 
     @Transactional
@@ -80,6 +117,9 @@ public class MeetingScheduleResource {
         for (Meeting meeting : meetingSchedule.getMeetingList()) {
             // TODO this is awfully naive: optimistic locking causes issues if called by the SolverManager
             Meeting attachedMeeting = meetingRepository.findById(meeting.getId());
+            if (attachedMeeting == null) {
+                throw new RuntimeException("No meeting found with id: " + meeting.getId());
+            }
             attachedMeeting.setTimeslot(meeting.getTimeslot());
             attachedMeeting.setRoom(meeting.getRoom());
         }

@@ -11,9 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Timeslot {
 
     @PlanningId
@@ -94,6 +96,12 @@ public class Timeslot {
     @JsonIgnore
     public int getTimeDifferenceFromStartDate(){
         return Math.toIntExact(Math.abs(ChronoUnit.HOURS.between(getStartDateTime(), f2fStartDate)));
+    }
+
+    public Timeslot(Timeslot other){
+        this.dayOfWeek = other.dayOfWeek;
+        this.startTime = other.startTime;
+        this.endTime = other.endTime;
     }
 
 }
