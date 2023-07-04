@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @PlanningEntity
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Meeting {
 
     @Id
@@ -37,11 +39,6 @@ public class Meeting {
     public Meeting() {
     }
 
-    @JsonIgnore
-    public List<String> getAttendeesList() {
-        return List.of(attendees.split(", "));
-    }
-
     public Meeting(String topic, String speaker, String attendees, Long priority) {
         this.topic = topic;
         this.speaker = speaker;
@@ -49,7 +46,8 @@ public class Meeting {
         this.priority = priority;
     }
 
-    public Meeting(Long id, String topic, String speaker, String attendees, String sessionId, Long priority, Timeslot timeslot, Room room) {
+    public Meeting(Long id, String topic, String speaker, String attendees, String sessionId, Long priority, Timeslot timeslot,
+            Room room) {
         this.id = id;
         this.topic = topic;
         this.speaker = speaker;
@@ -58,6 +56,18 @@ public class Meeting {
         this.timeslot = timeslot;
         this.room = room;
         this.priority = priority;
+    }
+
+    public Meeting(Meeting other) {
+        this.topic = other.topic;
+        this.speaker = other.speaker;
+        this.attendees = other.attendees;
+        this.priority = other.priority;
+    }
+
+    @JsonIgnore
+    public List<String> getAttendeesList() {
+        return List.of(attendees.split(", "));
     }
 
     public Long getId() {

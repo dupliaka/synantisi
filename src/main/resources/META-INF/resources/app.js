@@ -25,6 +25,10 @@ $(document).ready(function () {
       };
     });
 
+    $('#inputScheduleJsonFile').on('change',function(e){
+         var fileName = e.target.files[0].name;;
+         $(this).next('.custom-file-label').html(fileName);
+     })
     $("#refreshButton").click(function () {
       refreshTimeTable();
     });
@@ -46,11 +50,17 @@ $(document).ready(function () {
     $("#addRoomSubmitButton").click(function () {
       addRoom();
     });
+    $("#uploadSchedule").click(function () {
+      uploadSchedule();
+    });
     $("#getStartedButton").click(function () {
       getStartedButton();
     });
     $("#resetSchedule").click(function () {
       resetSchedule();
+    });
+    $("#shareButton").click(function () {
+      shareSchedule();
     });
     if (getCookie("JSESSIONID") == undefined) {
         $("#greetingsDialog").modal('toggle');
@@ -82,6 +92,19 @@ function getStartedButton(){
 function convertToId(str) {
   // Base64 encoding without padding to avoid XSS
   return btoa(str).replace(/=/g, "");
+}
+
+function shareSchedule(){
+    $.getJSON("/schedule/share", function (timeTable) {
+        const jsonString = JSON.stringify(timeTable, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = 'schedule.json';
+        anchorElement.click();
+        URL.revokeObjectURL(url);
+  })
 }
 
 function uploadUnsolved(e){
@@ -360,6 +383,29 @@ function addRoom() {
     showError("Adding room (" + name + ") failed.", xhr);
   });
   $("#roomDialog").modal('toggle');
+}
+
+function uploadSchedule(){
+  const fileInput = document.getElementById('inputScheduleJsonFile');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      console.log('No file selected.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const jsonData = event.target.result;
+      $.post("/schedule/upload", JSON.stringify(jsonData)
+      , function () {
+          refreshTimeTable();
+        }).fail(function (xhr, ajaxOptions, thrownError) {
+          showError("Meeting upload (" + fileInput + ") failed.", xhr);
+        });
+    };
+    reader.readAsText(file);
+    $('#uploadDialog').modal('toggle');
 }
 
 function deleteRoom(room) {

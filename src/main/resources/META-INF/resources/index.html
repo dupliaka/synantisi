@@ -75,12 +75,39 @@
         <button class="btn btn-secondary" data-target="#roomDialog" data-toggle="modal" type="button">
             <span class="fas fa-plus"></span> Add room
         </button>
+        <button class="btn btn-primary" id="shareButton" type="button">
+            <span class="far fa-share-square"></span> Share
+        </button>
+        <button class="btn btn-primary" data-target="#uploadDialog" data-toggle="modal" type="button">
+            <span class="fas fa-upload"></span> Upload
+        </button>
     </div>
 
     <h2>Unassigned meetings</h2>
     <div class="card-columns" id="unassignedMeetings"></div>
 </div>
 
+<div class="modal" id="uploadDialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload your schedule.json</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputScheduleJsonFile" aria-describedby="inputGroupFileAddon04">
+                    <label class="custom-file-label" for="inputScheduleJsonFile">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="uploadSchedule">Upload schedule</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="scheduleDialog" role="dialog" tabindex="-1">
     <div class="modal-dialog" role="dialog">
@@ -248,9 +275,33 @@
     </div>
 </div>
 
+<div class="modal fade" id="timeTableDialog" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Create from Json</h4>
+                <button class="close" data-dismiss="modal" type="button">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="scheduleJson" class="col-form-label">Json:</label>
+                    <textarea class="form-control" id="scheduleJson"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="addScheduleSubmitButton" type="button">Submit new schedule</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="/webjars/jquery/jquery.min.js"></script>
 <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 <script src="/webjars/momentjs/min/moment.min.js"></script>
 <script src="/app.js"></script>
+
 </body>
 </html>
