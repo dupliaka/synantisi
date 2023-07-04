@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.kie.SessionController;
 import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
@@ -24,6 +26,8 @@ import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.SolverStatus;
 
 import io.quarkus.panache.common.Sort;
+
+import java.util.List;
 
 @Path("schedule")
 public class MeetingScheduleResource {
@@ -140,5 +144,35 @@ public class MeetingScheduleResource {
     @Transactional
     public void reset(@CookieParam("JSESSIONID") String sessionId){
         sessionController.removeSessionDataById(sessionId);
+    }
+
+    @DELETE
+    @Path("timeslot/{id}")
+    @Transactional
+    public void deleteScheduledTimeslots(@PathParam("id") Long id){
+        meetingRepository.update("room_id = null where timeslot_id = ?1", id);
+        meetingRepository.update("timeslot_id = null where timeslot_id = ?1", id);
+        timeslotRepository.deleteById(id);
+    }
+
+    @GET
+    @Path("timeslot/{id}")
+    public List<Meeting> getMeetingsAssignedToTimeslots(@PathParam("id") Long id){
+        return meetingRepository.list("timeslot_id", id);
+    }
+
+    @DELETE
+    @Path("room/{id}")
+    @Transactional
+    public void deleteScheduledRooms(@PathParam("id") Long id){
+        meetingRepository.update("room_id = null where room_id = ?1", id);
+        meetingRepository.update("timeslot_id = null where room_id = ?1", id);
+        roomRepository.deleteById(id);
+    }
+
+    @GET
+    @Path("room/{id}")
+    public List<Meeting> getMeetingsAssignedToRooms(@PathParam("id") Long id){
+        return meetingRepository.list("room_id", id);
     }
 }
