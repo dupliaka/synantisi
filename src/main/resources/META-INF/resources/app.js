@@ -62,6 +62,12 @@ $(document).ready(function () {
     $("#shareButton").click(function () {
       shareSchedule();
     });
+    $("#reassignMeetingsOnTimeslotButton").click(function () {
+      reassignMeetingsOnTimeslot();
+    });
+   $("#reassignMeetingsOnRoomButton").click(function () {
+     reassignMeetingsOnRoom();
+   });
     if (getCookie("JSESSIONID") == undefined) {
         $("#greetingsDialog").modal('toggle');
     }
@@ -364,12 +370,48 @@ function addTimeslot() {
   $('#timeslotDialog').modal('toggle');
 }
 
-function deleteTimeslot(timeslot) {
-  $.delete("/timeslots/" + timeslot.id, function () {
+function reassignMeetingsOnTimeslot(){
+  var timeslotId = $('#reassignMeetingsTimeslotId').text().trim();
+
+  $.delete("/schedule/timeslot/" + timeslotId, function () {
     refreshTimeTable();
   }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Deleting timeslot (" + timeslot.name + ") failed.", xhr);
+    showError("Deleting timeslot failed.", xhr);
   });
+
+  $('#timeSlotDeleteDialog').modal('toggle');
+}
+
+function deleteTimeslot(timeslot) {
+  $.getJSON("/schedule/timeslot/" + timeslot.id, function (meetings) {
+    var topics = meetings.map(meeting => meeting.topic);
+    var ids = meetings.map(meeting => meeting.id);
+    $('#reassignMeetings').text(topics.join(", "));
+    $('#reassignMeetingsTimeslotId').text(timeslot.id).hide();
+  });
+  $('#timeSlotDeleteDialog').modal('toggle');
+}
+
+function deleteRoom(room) {
+ $.getJSON("/schedule/room/" + room.id, function (meetings) {
+    var topics = meetings.map(meeting => meeting.topic);
+    var ids = meetings.map(meeting => meeting.id);
+    $('#reassignMeetingsOnRoom').text(topics.join(", "));
+    $('#reassignMeetingsOnRoomId').text(room.id).hide();
+  });
+  $('#roomDeleteDialog').modal('toggle');
+}
+
+function reassignMeetingsOnRoom(){
+  var roomId = $('#reassignMeetingsOnRoomId').text().trim();
+
+  $.delete("/schedule/room/" + roomId, function () {
+    refreshTimeTable();
+  }).fail(function (xhr, ajaxOptions, thrownError) {
+    showError("Deleting room failed.", xhr);
+  });
+
+  $('#roomDeleteDialog').modal('toggle');
 }
 
 function addRoom() {
@@ -406,14 +448,6 @@ function uploadSchedule(){
     };
     reader.readAsText(file);
     $('#uploadDialog').modal('toggle');
-}
-
-function deleteRoom(room) {
-  $.delete("/rooms/" + room.id, function () {
-    refreshTimeTable();
-  }).fail(function (xhr, ajaxOptions, thrownError) {
-    showError("Deleting room (" + room.name + ") failed.", xhr);
-  });
 }
 
 function showError(title, xhr) {
