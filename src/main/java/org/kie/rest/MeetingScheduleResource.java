@@ -8,11 +8,11 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.kie.SessionController;
 import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
@@ -150,8 +150,8 @@ public class MeetingScheduleResource {
     @Path("timeslot/{id}")
     @Transactional
     public void deleteScheduledTimeslots(@PathParam("id") Long id){
-        meetingRepository.update("room_id = null where timeslot_id = ?1", id);
         meetingRepository.update("timeslot_id = null where timeslot_id = ?1", id);
+        meetingRepository.update("room_id = null where timeslot_id = ?1", id);
         timeslotRepository.deleteById(id);
     }
 

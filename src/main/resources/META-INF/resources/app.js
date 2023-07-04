@@ -66,7 +66,7 @@ $(document).ready(function () {
       reassignMeetingsOnTimeslot();
     });
    $("#reassignMeetingsOnRoomButton").click(function () {
-     reassignMeetingsRoom();
+     reassignMeetingsOnRoom();
    });
     if (getCookie("JSESSIONID") == undefined) {
         $("#greetingsDialog").modal('toggle');
@@ -396,14 +396,14 @@ function deleteRoom(room) {
  $.getJSON("/schedule/room/" + room.id, function (meetings) {
     var topics = meetings.map(meeting => meeting.topic);
     var ids = meetings.map(meeting => meeting.id);
-    $('#reassignMeetingsRoom').text(topics.join(", "));
-    $('#reassignMeetingsRoomId').text(room.id).hide();
+    $('#reassignMeetingsOnRoom').text(topics.join(", "));
+    $('#reassignMeetingsOnRoomId').text(room.id).hide();
   });
   $('#roomDeleteDialog').modal('toggle');
 }
 
-function reassignMeetingsRoom(){
-  var roomId = $('#reassignMeetingsRoomId').text().trim();
+function reassignMeetingsOnRoom(){
+  var roomId = $('#reassignMeetingsOnRoomId').text().trim();
 
   $.delete("/schedule/room/" + roomId, function () {
     refreshTimeTable();
