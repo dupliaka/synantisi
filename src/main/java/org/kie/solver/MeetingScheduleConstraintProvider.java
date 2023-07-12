@@ -45,10 +45,8 @@ public class MeetingScheduleConstraintProvider implements ConstraintProvider {
         return constraintFactory
                 .forEachUniquePair(Meeting.class,
                         Joiners.equal(Meeting::getTimeslot))
-                .filter((meeting1,
-                        meeting2) -> CollectionUtils.intersection(meeting1.getAttendeesList(), meeting2.getAttendeesList())
-                                .size() > 0)
-                .penalize(HardMediumSoftScore.ONE_HARD)
+                .penalize(HardMediumSoftScore.ONE_MEDIUM,(meeting1,
+                                       meeting2) -> CollectionUtils.intersection(meeting1.getAttendeesList(), meeting2.getAttendeesList()).size())
                 .asConstraint("Attendance Conflict");
     }
 
@@ -59,7 +57,7 @@ public class MeetingScheduleConstraintProvider implements ConstraintProvider {
                 .join(Meeting.class, Joiners.greaterThan(Meeting::getPriority))
                 .filter((meeting1,
                          meeting2) -> meeting1.getTimeslot().getStartDateTime().isAfter(meeting2.getTimeslot().getStartDateTime()))
-                .penalize(HardMediumSoftScore.ONE_MEDIUM)
+                .penalize(HardMediumSoftScore.ONE_SOFT)
                 .asConstraint("Prioritization constraint");
     }
 

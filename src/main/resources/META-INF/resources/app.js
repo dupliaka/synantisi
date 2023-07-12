@@ -180,8 +180,9 @@ function refreshTimeTable() {
     const theadByStudentGroup = $("<thead>").appendTo(scheduleByAttendees);
     const headerRowByStudentGroup = $("<tr>").appendTo(theadByStudentGroup);
     headerRowByStudentGroup.append($("<th>Timeslot</th>"));
-    const studentGroupList = [...new Set(timeTable.meetingList.map(meeting => meeting.attendees))];
-    $.each(studentGroupList, (index, attendees) => {
+    const attendeesList = [...new Set(timeTable.meetingList.flatMap(meeting => meeting.attendees.split(',')))];
+
+    $.each(attendeesList, (index, attendees) => {
       headerRowByStudentGroup
         .append($("<th/>")
           .append($("<span/>").text(attendees)));
@@ -229,8 +230,8 @@ function refreshTimeTable() {
                     -
                     ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
                 `)));
-      $.each(studentGroupList, (index, attendees) => {
-        rowByStudentGroup.append($("<td/>").prop("id", `timeslot${timeslot.id}studentGroup${convertToId(attendees)}`));
+      $.each(attendeesList, (index, attendees) => {
+        rowByStudentGroup.append($("<td/>").prop("id", `timeslot${timeslot.id}attendees${convertToId(attendees)}`));
       });
     });
 
@@ -249,17 +250,23 @@ function refreshTimeTable() {
           .append($(`<small class="fas fa-pen"/>`)
           ).click(() => editMeeting(meeting))
       );
-            meetingElement.find(".card-body").prepend(
-              $(`<button type="button" class="ml-2 btn btn-light btn-sm p-1 float-right"/>`)
-                .append($(`<small class="fas fa-trash"/>`)
-                ).click(() => deleteMeeting(meeting))
-            );
+      meetingElement.find(".card-body").prepend(
+        $(`<button type="button" class="ml-2 btn btn-light btn-sm p-1 float-right"/>`)
+          .append($(`<small class="fas fa-trash"/>`)
+          ).click(() => deleteMeeting(meeting))
+      );
       if (meeting.timeslot == null || meeting.room == null) {
         unassignedMeetings.append(meetingElement);
       } else {
         $(`#timeslot${meeting.timeslot.id}room${meeting.room.id}`).append(meetingElement);
         $(`#timeslot${meeting.timeslot.id}teacher${convertToId(meeting.speaker)}`).append(meetingElementWithoutDelete.clone());
-        $(`#timeslot${meeting.timeslot.id}studentGroup${convertToId(meeting.attendees)}`).append(meetingElementWithoutDelete.clone());
+        //TODO: attendees from meeting should have the same id as a slot that generated as timeslot_attendees_(value from convert of attendees)
+        //the code above is only for attendees tab
+        //for each meeting for each attendees clone element and convertToId only this element.
+        scheduledAttendeesList = [...new Set(meeting.attendees.split(','))];
+        $.each(scheduledAttendeesList, (index, attendee) => {
+            $(`#timeslot${meeting.timeslot.id}attendees${convertToId(attendee)}`).append(meetingElementWithoutDelete.clone());
+        });
       }
     });
   });
