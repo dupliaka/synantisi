@@ -260,9 +260,6 @@ function refreshTimeTable() {
       } else {
         $(`#timeslot${meeting.timeslot.id}room${meeting.room.id}`).append(meetingElement);
         $(`#timeslot${meeting.timeslot.id}teacher${convertToId(meeting.speaker)}`).append(meetingElementWithoutDelete.clone());
-        //TODO: attendees from meeting should have the same id as a slot that generated as timeslot_attendees_(value from convert of attendees)
-        //the code above is only for attendees tab
-        //for each meeting for each attendees clone element and convertToId only this element.
         scheduledAttendeesList = [...new Set(meeting.attendees.split(','))];
         $.each(scheduledAttendeesList, (index, attendee) => {
             $(`#timeslot${meeting.timeslot.id}attendees${convertToId(attendee)}`).append(meetingElementWithoutDelete.clone());
