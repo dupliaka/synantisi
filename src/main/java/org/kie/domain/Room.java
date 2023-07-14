@@ -22,17 +22,6 @@ public class Room {
     public Room() {
     }
 
-    public Room(String name, Integer capacity, String sessionId) {
-        this.name = name;
-        this.sessionId = sessionId;
-        this.capacity = capacity;
-    }
-
-    public Room(String name, Integer capacity) {
-        this.name = name;
-        this.capacity = capacity;
-    }
-
     public Room(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -76,4 +65,7 @@ public class Room {
         this.capacity = other.capacity;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
