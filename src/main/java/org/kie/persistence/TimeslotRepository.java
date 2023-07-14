@@ -2,12 +2,10 @@ package org.kie.persistence;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.domain.Room;
 import org.kie.domain.Timeslot;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.kie.SessionController;
-import org.kie.bootstrap.DemoDataGenerator;
 import org.kie.domain.Meeting;
 import org.kie.domain.MeetingSchedule;
 import org.kie.persistence.MeetingRepository;
@@ -39,8 +38,6 @@ public class MeetingScheduleResource {
     MeetingRepository meetingRepository;
     @Inject
     SessionController sessionController;
-    @Inject
-    DemoDataGenerator demoDataGenerator;
     @Inject
     SolverManager<MeetingSchedule, String> solverManager;
     @Inject
