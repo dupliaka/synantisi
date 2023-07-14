@@ -15,7 +15,7 @@ import java.util.UUID;
 @SessionScoped
 public class SessionController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(SessionController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class);
 
     @Inject
     TimeslotRepository timeslotRepository;

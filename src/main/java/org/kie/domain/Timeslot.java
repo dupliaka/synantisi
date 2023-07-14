@@ -25,7 +25,7 @@ public class Timeslot {
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
-    static private LocalDateTime f2fStartDate = LocalDateTime.of(2023,3,6,0,0);// TODO: set F2F period in the beginning of the session
+    static private final LocalDateTime f2fStartDate = LocalDateTime.of(2023,3,6,0,0);// TODO: set F2F period in the beginning of the session
     private String sessionId;
 
     // No-arg constructor required for Hibernate
