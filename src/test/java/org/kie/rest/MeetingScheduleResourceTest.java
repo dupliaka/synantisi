@@ -9,18 +9,25 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Objects;
 import javax.ws.rs.core.MediaType;
+
+import io.vertx.core.Vertx;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.kie.domain.Meeting;
 import org.kie.domain.MeetingSchedule;
 import org.optaplanner.core.api.solver.SolverStatus;
 
 import io.quarkus.test.junit.QuarkusTest;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @QuarkusTest
 public class MeetingScheduleResourceTest {
 
     public static final String JSESSIONID = "JSESSIONID";
     public static final String SESSION_KEY = "dCWkP1qnh0mR7-SDXT0KLeGWkB6ai0dShg2B_IfI";
+    private static final Vertx vertx = Vertx.vertx();
 
     private static MeetingSchedule getSchedule() {
         return given()
@@ -41,6 +48,7 @@ public class MeetingScheduleResourceTest {
                 .statusCode(204);
     }
 
+    @Order(1)
     @Test
     void getMeetingSchedule() {
         MeetingSchedule meetingSchedule = getSchedule();
@@ -53,15 +61,10 @@ public class MeetingScheduleResourceTest {
         assertEquals("E.Mask, M.Zuckerberg", meetingSchedule.getMeetingList().get(0).getAttendees());
         assertEquals("L.Torvalds", meetingSchedule.getMeetingList().get(0).getSpeaker());
         assertEquals("Code like a Boss", meetingSchedule.getMeetingList().get(0).getTopic());
-
         assertEquals("Room A", meetingSchedule.getRoomList().get(0).getName());
-
         assertEquals("MONDAY", meetingSchedule.getTimeSlotList().get(0).getDayOfWeek().name());
         assertEquals("09:30", meetingSchedule.getTimeSlotList().get(0).getEndTime().toString());
         assertEquals("08:30", meetingSchedule.getTimeSlotList().get(0).getStartTime().toString());
-
-        resetSchedule();
-        assertTrue(getSchedule().getMeetingList().isEmpty());
     }
 
     @Test
@@ -103,6 +106,8 @@ public class MeetingScheduleResourceTest {
         assertMeetingsAssignedToRooms();
         deleteScheduledRooms();
         deleteScheduledTimeslots();
+        resetSchedule();
+        assertTrue(getSchedule().getMeetingList().isEmpty());
     }
 
     private void assertAssignment(MeetingSchedule schedule, String meetingName, String timeslot, String room) {

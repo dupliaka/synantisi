@@ -147,8 +147,8 @@ public class MeetingScheduleResource {
     @Path("timeslot/{id}")
     @Transactional
     public void deleteScheduledTimeslots(@PathParam("id") Long id){
-        meetingRepository.update("timeslot_id = null where timeslot_id = ?1", id);
         meetingRepository.update("room_id = null where timeslot_id = ?1", id);
+        meetingRepository.update("timeslot_id = null where timeslot_id = ?1", id);
         timeslotRepository.deleteById(id);
     }
 
@@ -162,8 +162,8 @@ public class MeetingScheduleResource {
     @Path("room/{id}")
     @Transactional
     public void deleteScheduledRooms(@PathParam("id") Long id){
-        meetingRepository.update("room_id = null where room_id = ?1", id);
         meetingRepository.update("timeslot_id = null where room_id = ?1", id);
+        meetingRepository.update("room_id = null where room_id = ?1", id);
         roomRepository.deleteById(id);
     }
 
