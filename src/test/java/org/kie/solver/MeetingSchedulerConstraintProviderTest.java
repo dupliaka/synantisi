@@ -14,14 +14,16 @@ import org.optaplanner.test.api.score.stream.ConstraintVerifier;
 
 import io.quarkus.test.junit.QuarkusTest;
 
+import static io.restassured.RestAssured.given;
+
 @QuarkusTest
 public class MeetingSchedulerConstraintProviderTest {
 
     private static final Room ROOM1 = new Room(1L, "Room1");
     private static final Room ROOM2 = new Room(2L, "Room2");
-    private static final Timeslot TIMESLOT1 = new Timeslot(1L, DayOfWeek.MONDAY, LocalTime.NOON);
-    private static final Timeslot TIMESLOT2 = new Timeslot(2L, DayOfWeek.TUESDAY, LocalTime.NOON);
-    private static final Timeslot TIMESLOT3 = new Timeslot(3L, DayOfWeek.MONDAY, LocalTime.NOON.plusHours(5));
+    private static final Timeslot TIMESLOT1 = new Timeslot(1L, DayOfWeek.MONDAY, LocalTime.NOON, LocalTime.NOON.plusHours(1));
+    private static final Timeslot TIMESLOT2 = new Timeslot(2L, DayOfWeek.TUESDAY, LocalTime.NOON,  LocalTime.NOON.plusHours(1));
+    private static final Timeslot TIMESLOT3 = new Timeslot(3L, DayOfWeek.MONDAY, LocalTime.NOON.plusHours(5),  LocalTime.NOON.plusHours(6));
 
     @Inject
     ConstraintVerifier<MeetingScheduleConstraintProvider, MeetingSchedule> constraintVerifier;

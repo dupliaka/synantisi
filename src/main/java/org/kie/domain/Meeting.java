@@ -39,13 +39,6 @@ public class Meeting {
     public Meeting() {
     }
 
-    public Meeting(String topic, String speaker, String attendees, Long priority) {
-        this.topic = topic;
-        this.speaker = speaker;
-        this.attendees = attendees;
-        this.priority = priority;
-    }
-
     public Meeting(Long id, String topic, String speaker, String attendees, String sessionId, Long priority, Timeslot timeslot,
             Room room) {
         this.id = id;

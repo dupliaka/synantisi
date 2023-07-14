@@ -32,22 +32,11 @@ public class Timeslot {
     public Timeslot() {
     }
 
-    public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public Timeslot(Long id, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public Timeslot(Long id, DayOfWeek dayOfWeek, LocalTime startTime) {
-        this(dayOfWeek, startTime, startTime.plusMinutes(50));
         this.id = id;
-    }
-
-
-
-    public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String sessionId) {
-        this(dayOfWeek, startTime, endTime);
-        this.sessionId = sessionId;
     }
 
     @Override
